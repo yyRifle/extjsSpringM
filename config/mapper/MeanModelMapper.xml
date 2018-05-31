@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+ 
+<mapper namespace="com.gr.blog.mean.dao.MeanDao">
+
+	<!-- 配置承接结果集的List -->
+	<resultMap type="com.gr.blog.mean.model.MeanModel" id="MenuList">
+		<id column="id" property="id"/>
+		<result column="text" property="text" />
+		<!-- 需要注意的是， <result property="leaf" column="leaf" jdbcType="TINYINT" javaType="Boolean" />这样的话，
+		mybatis就会自动将数据库中的TINYINT类型的leaf转化成布尔类型，
+		0会转化为false，1会转化为true。这里一定要有这个，不然在执行时会报异常 -->
+		<result column="isleaf" property="leaf" jdbcType="TINYINT" javaType="Boolean"/>
+		<result column="url" property="url" />
+		<result column="iconCls" property="iconCls" />
+		<result column="fatherId" property="fatherId" />
+	</resultMap>
+	<!-- 配置查询父类节点的List -->
+	<resultMap type="com.gr.blog.mean.model.MeanModel" id="fatherList">
+		<id column="menuid" property="id"/>
+		<result column="text" property="text" />
+	</resultMap>
+	
+	<select id="selectTotalMenu" resultType="java.lang.Integer">
+		select count(id) total from menu_tree
+	</select>
+	<!-- 根据传入的父节点 查询得到子节点 -->
+	<select id="selectAllMean" resultMap="MenuList" parameterType="java.lang.String">
+		select * from menu_tree bt where bt.fatherId = #{fatherId};
+	</select>
+	
+	<select id="selectALLTreeMenu" resultMap="MenuList">
+		select * from menu_tree where 1=1;
+	</select>
+	
+	<select id="selectFeatherMenu" resultMap="fatherList">
+		SELECT mt.id as menuid,mt.text FROM menu_tree mt
+	</select>
+	
+	<select id="selectFatherIdByName" resultType="java.lang.Integer">
+		SELECT mt.id FROM menu_tree mt where mt.text = (#{fatherName});
+	</select>
+	
+	
+	<insert id="insertMenuInfoToDB" parameterType="hashMap">
+		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+          SELECT LAST_INSERT_ID()
+      	</selectKey>
+		insert into menu_tree(text,isleaf,url,iconCls,fatherId,operate,operate_time) 
+		values(#{text},#{leaf},#{url},#{iconCls},#{fatherId},#{operate},#{operateTime});
+	</insert>
+</mapper>

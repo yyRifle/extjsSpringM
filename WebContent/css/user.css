@@ -1,0 +1,16 @@
+body {
+	padding: 0;
+	margin: 0;
+}
+#userSeach{
+	width: 100%;
+	height: 200px;
+	border: 1px;
+	border-color: red;
+}
+#queryShowUserInfo{
+	width: 100%;
+}
+.seachKey{
+	background-image:url(/blog_back/images/file_find.png)!important;
+}

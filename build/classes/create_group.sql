@@ -1,0 +1,7 @@
+CREATE TABLE groups(
+	gid INT(9) NOT NULL AUTO_INCREMENT,
+	g_name VARCHAR(30) COMMENT '组名',
+	create_g_people VARCHAR(20) NOT NULL DEFAULT 'admin' COMMENT '创建组的人',
+	create_g_time DATETIME,
+	PRIMARY KEY(gid)
+)ENGINE=INNODB DEFAULT CHARSET=utf8

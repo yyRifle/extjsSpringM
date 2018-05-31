@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+ 
+<mapper namespace="com.gr.blog.jira.dao.JiraDao">
+	
+	<!-- 配置承接结果集的List -->
+	<resultMap type="com.gr.blog.jira.model.JiraModel" id="jiraList">
+		<id column="jid" property="jid"/>
+		<result column="username" property="username" />
+		<result column="jiar_nm" property="jiarNm"/>
+		<result column="is_online" property="isOnline" />
+		<result column="is_ower_sql_bat" property="isOwerSqlBat" />
+		<result column="online_Time" property="onlineTime" />
+		<result column="code_division" property="codeDivision" />
+		<result column="impl_principle" property="implPrinciple" />
+		<result column="code_line" property="codeLine" />
+		<result column="code_note" property="codeNote" />
+	</resultMap>
+	
+	<!-- 根据传入的父节点 查询得到子节点 -->
+	<select id="selectAllJira" parameterType="hashMap" resultMap="jiraList">
+		select * from jiar_sub_record where 1 = 1
+		<if test="username != null and username != ''">
+			and username = #{username}
+		</if>
+		<if test="jid != null and jid != ''">
+			and jid = #{jid}
+		</if>
+		<if test="jiarNm != null and jiarNm != ''">
+			and jiar_nm = #{jiarNm}
+		</if>
+		limit #{start},#{limit}
+	</select>
+	
+	<insert id="insertJiarTableInfo" parameterType="hashMap" >
+		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="jid">
+          SELECT LAST_INSERT_ID()
+      	</selectKey>
+		insert into jiar_sub_record(jid,username,jiar_nm,is_ower_sql_bat,is_online,online_Time,code_division,impl_principle,code_line,code_note,operate_time) values 
+		(#{jid},#{nickName},#{jiarNm},#{isOwerSqlBat},#{isOnline},#{onlineTime},#{codeDivision},#{implPrinciple},#{codeLine},#{codeNote},#{operateTime})
+	</insert>
+	
+	<delete id="deleteJiraInfoByJid" parameterType="java.lang.String">
+		delete from jiar_sub_record where jid = #{jid}
+	</delete>
+</mapper>
