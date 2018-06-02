@@ -1,4 +1,4 @@
-var dgId = window.parent.dgId;
+var dgId = window.parent.dgId;//
 Ext.onReady(function(){
 	var deptAndGroupsModel = Ext.define('userModel',{
 		extend:'Ext.data.Model',
@@ -73,6 +73,7 @@ Ext.onReady(function(){
 	       }],
 	   	listeners: {
 	   		itemdblclick: function(view, record, item, index, e) {
+	   			deptId = record.date.dgId;
 	   			Ext.Ajax.request({
 	   				url:"/extjsSpringM/jiraAction/queryCodeLineByjid.do",
 	   				mehtod:'get',

@@ -38,7 +38,7 @@ Ext.onReady(function(){
 	 * 加载菜单数据
 	 */
 	var leftTree = Ext.create('Ext.tree.Panel',{
-		title:'<span style="color:black"><font>基础菜单</font></span>',
+		title:'<span style="color:black">基础菜单</span>',
 		width:180,
 		minWidth:90,
 		height:'100%',
@@ -49,15 +49,14 @@ Ext.onReady(function(){
 		rootVisible: false,//隐藏根节点
 		listeners:{
 			itemclick:function(view, record, item, index, e){
-				i++;
 				var url = record.get('url');
 				var leaf = record.get('leaf');
 				var tableid = record.get('id');
-				var text = record.get('text');
+				var text = "<span style='color:black'>"+record.get('text')+"</span>";
 				if (leaf) {
 					var newTab = Ext.create('Ext.panel.Panel',{
 						id:tableid,
-						title:'<span style="color:black"><font>'+text+'</font></span>',
+						title:text,
 						closable : true,
 						html:'<iframe width="100%" height="100%" scrolling="no" frameborder="0" src="'+url+'"></iframe>'
 					});
