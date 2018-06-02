@@ -35,7 +35,7 @@ public class JiraServiceImpl implements JiraService{
 	public int suibmitJirainfo(Map<String,Object> map) {
 		String jid = CommonUtils.getUUID32Bit();
 		map.put("jid", jid);
-		map.put("operateTime", CommonUtils.getCurrentTime());
+		map.put("operateTime", CommonUtils.getStringCurrentTime());
 		Long resunltNum = jiraDao.insertJiarTableInfo(map);
 		String resuNum = String.valueOf(resunltNum);
 		int res = 0;

@@ -1,5 +1,6 @@
 package com.gr.blog.mean.action;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,6 @@ import com.gr.blog.utils.CollectionsUtil;
  * 2017年12月25日 上午11:32:07
  */
 @Controller
-@RequestMapping("meanAction")
 public class MeanAction {
 
 	private static final Logger logger = Logger.getLogger(MeanAction.class);
@@ -40,7 +40,7 @@ public class MeanAction {
 	 * @return
 	 * 2018年1月23日 上午11:39:05
 	 */
-	@RequestMapping("showAllTree")
+	@RequestMapping("meanAction/showAllTree")
 	@ResponseBody
 	public Map<String,List<MeanModel>> showAllTreeIndex(HttpServletRequest request){
 		String node = request.getParameter("node");
@@ -59,7 +59,7 @@ public class MeanAction {
 	 * @return
 	 * 2018年1月23日 上午11:42:00
 	 */
-	@RequestMapping("showALLTreeMenu")
+	@RequestMapping("meanAction/showALLTreeMenu")
 	public @ResponseBody Map<String,Object> showALLTreeMenu(HttpServletRequest request,
 			MeanModel menu,int page,int start,int limit){
 		logger.error("传人的菜单对象"+menu);
@@ -78,7 +78,7 @@ public class MeanAction {
 	 * @return
 	 * 2018年1月23日 下午3:35:36
 	 */
-	@RequestMapping("findFeatherMenu")
+	@RequestMapping("meanAction/findFeatherMenu")
 	public @ResponseBody List<MeanModel> findFeatherMenu(){
 		List<MeanModel> menuList = meanService.findFeatherMenu();
 		return menuList;
@@ -86,14 +86,32 @@ public class MeanAction {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@RequestMapping("addMenuInfoToDb")
-	public void addMenuInfoToDb(HttpServletRequest request,HttpServletResponse response){
+	@RequestMapping("meanAction/addMenuInfoToDb")
+	public void addMenuInfoToDb(HttpServletRequest request,HttpServletResponse response) throws IOException{
 		Map<String, String[]> menuMap = request.getParameterMap();
 		Map<String,Object> addmap = new HashMap<String,Object>();
 		addmap = CollectionsUtil.MapArrayToMapObject(menuMap, addmap);
 		String username = (String)request.getSession().getAttribute("username");
 		addmap.put("operate", username);
 		int result = meanService.insertToDBMenuDate(addmap);
+		if (result > 0) {
+			response.getWriter().print("{ success: true, errors: {} }");
+		} else {
+			response.getWriter().print("{ success: true, errors: {info:'保存失败'} }");
+		}
+	}
+	
+	/**
+	 * 查询menu中只有子菜单的数据
+	 * @author:巩斌鹏
+	 * 2018年6月1日 上午11:05:38
+	 * @return
+	 * List<MeanModel>
+	 */
+	@RequestMapping("meanAction/showUrlIsNotNullMenu")
+	@ResponseBody
+	public List<MeanModel> showUrlIsNotNullMenu(){
+		return meanService.showUrlIsNotNullMenu();
 	}
 	
 	/**

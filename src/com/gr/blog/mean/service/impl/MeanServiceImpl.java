@@ -76,9 +76,15 @@ public class MeanServiceImpl implements MeanService {
 		if ("0".equals(leaf)) {
 			menuMap.put("fatherId", Constants.C_TYPE_0);
 		}
-		menuMap.put("operateTime", CommonUtils.getCurrentTime());
+		menuMap.put("operateTime", CommonUtils.getStringCurrentTime());
 		int insertNum = meanDao.insertMenuInfoToDB(menuMap);
 		return insertNum;
+	}
+
+	@Override
+	public List<MeanModel> showUrlIsNotNullMenu() {
+		String mtUrl = "";
+		return meanDao.selectUrlIsNotNullMenu(mtUrl);
 	}
 
 }

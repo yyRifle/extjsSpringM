@@ -18,5 +18,6 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 		<mapper resource="mapper/UserModelMapper.xml" />
 		<mapper resource="mapper/MeanModelMapper.xml" />
 		<mapper resource="mapper/JiraMapper.xml" />
+		<mapper resource="mapper/DeptMapper.xml" />
 	</mappers>
 </configuration>  

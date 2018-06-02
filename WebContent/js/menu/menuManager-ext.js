@@ -16,7 +16,7 @@ Ext.onReady(function(){
 		        ]
 	});
 	
-	var store = Ext.create('Ext.data.Store',{
+	var menuStore = Ext.create('Ext.data.Store',{
 		model:menuMode,
 		autoLoad: true,
 		pageSize: 20,  //页容量5条数据
@@ -33,34 +33,59 @@ Ext.onReady(function(){
 			expanded:true
 		}
 	});
-	var mianTab = Ext.create('Ext.grid.Panel',{
+	var tbar = Ext.create('Ext.toolbar.Toolbar',{
+		width:35,
+		items:[
+				{
+					xtype:'label',
+					text:'用户名'
+				},
+				{
+					xtype:'textfield',
+					id:'username'
+				},'-',
+				{
+					text:'<span style="color:white;font-size:300">查询</span>',
+					style: 'background: #368ECE;border-color:#126DAF',
+					icon: '../../images/minico/search.png',
+					handler:function(){
+						var username=Ext.getCmp('username').getValue();
+						var phone=Ext.getCmp('jiarNm').getValue();
+						var isenable=Ext.getCmp('beginTime').getValue();
+						var email=Ext.getCmp('endTime').getValue();
+						var isenableSecond="second";//添加一个区分首次加载还是查询
+						
+						menuStore.load({params:{username:username,phone:phone,isenable:isenable,isenableSecond:isenableSecond,email:email,start: 0, limit: 25}});	
+					}
+				},'-',
+				{
+					text:'新增菜单',
+					style: 'background: #368ECE;border-color:#126DAF',
+					icon: '../../images/minico/sign_add.png',
+					handler:function(){
+						var win = Ext.create('Ext.window.Window',{
+							id:"addNewMenu",
+						    title:'新增菜单',       //弹出窗口内布局会充满整个窗口;
+						    modal: true, //是否模态窗口，默认为false
+						    width:380,          //设置窗口大小;
+						    height:300,
+						    closeAction:'hide', //点击右上角关闭按钮后会执行的操作;
+						   	closable:true,     //隐藏关闭按钮;
+						    draggable:true,     //窗口可拖动;
+						    resizable: false,
+						    items:[newMenuTab]
+						  });
+						  win.show();
+					}
+				}]
+	});
+	new Ext.create('Ext.grid.Panel',{
 		id:'mianTabId',
-		store:store,
-		height:580,
+		store:menuStore,
+		height:620,
 		columnLines: true,
 		renderTo:Ext.getBody(),
-    	//selType: "checkboxmodel",
-		tbar:[
-			{
-				xtype:'button',
-				text:'新增菜单',
-				handler:function(){
-					var win = Ext.create('Ext.window.Window',{
-						id:"addNewMenu",
-					    title:'新增菜单',       //弹出窗口内布局会充满整个窗口;
-					    modal: true, //是否模态窗口，默认为false
-					    width:380,          //设置窗口大小;
-					    height:300,
-					    closeAction:'hide', //点击右上角关闭按钮后会执行的操作;
-					   	closable:true,     //隐藏关闭按钮;
-					    draggable:true,     //窗口可拖动;
-					    resizable: false,
-					    items:[newMenuTab]
-					  });
-					  win.show();
-				}
-			}
-		],
+		tbar:tbar,
 		selModel: Ext.create("Ext.selection.CheckboxModel", {
 		    injectCheckbox: 1,//checkbox位于哪一列，默认值为0
 		    mode: "multi",//multi,simple,single；默认为多选multi
@@ -90,16 +115,17 @@ Ext.onReady(function(){
 			    text: '操作栏',
 			    align: 'center',
 			    renderer:function(value, metaData, record){
-			    	var uid = record.data.uid;
-			        btnStr = '<span>'+'<a id=\"modify\" value=\"修改\" onclick=\"modeifyThisLine(\''+uid+'\')\" />修改</a></span>';
-			        return btnStr;
+			    	var uid = record.data.id;
+			    	btnStr='<span>'+'<img src="../../images/minico/sign_cacel.png" alt="删除" onclick=\"deleteJiarInfo(\''+uid+'\');\"/>'+'&nbsp;&nbsp;'+
+			    	'<img src="../../images/minico/editor.png" alt="修改" onclick=\"openmsgs(\''+uid+'\');\"/></span>';  
+			    	return btnStr;
 			    }
 	        }
     	],
     	bbar: [
     		{
                 xtype: 'pagingtoolbar',
-                store: store,
+                store: menuStore,
                 displayMsg: '显示 {0} - {1} 条，共计 {2} 条',
                 emptyMsg: "没有数据",
                 beforePageText: "当前页",
@@ -114,7 +140,6 @@ Ext.onReady(function(){
 		autoLoad: true,
 		proxy:{
 			type:'ajax',
-			//actionMethods: { read: "POST" },
 			url:'/extjsSpringM/meanAction/findFeatherMenu.do',
 			reader:{
 				type:'json'
@@ -216,7 +241,9 @@ Ext.onReady(function(){
 		buttonAlign: 'center',
 		buttons: [
         {
-            text: '保存',
+        	text:'<span style="color:white;font-size:300">保存</span>',
+			style: 'background: #368ECE;border-color:#126DAF',
+			icon: '../../images/minico/save.png',
             handler: function () {
             	var frm = Ext.getCmp("newAddMenuFormID");
             	if (!frm.getForm().isValid()){
@@ -240,7 +267,9 @@ Ext.onReady(function(){
             	});
             }
         }, {
-            text: '关闭',
+        	text:'<span style="color:white;font-size:300">关闭</span>',
+			style: 'background: #368ECE;border-color:#126DAF',
+			icon: '../../images/minico/cancel.png',
             handler: function () {
             	Ext.getCmp("addNewMenu").close(this);
             }

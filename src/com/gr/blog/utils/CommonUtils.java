@@ -73,12 +73,15 @@ public class CommonUtils {
 	 * @return
 	 * String
 	 */
-	public static String getCurrentTime(){
+	public static String getStringCurrentTime(){
 		Date cDate = new Date();
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return format.format(cDate);
 	}
 	
+	public static Date getDateCurrentTime(){
+		return new Date();
+	}
 	/**
 	 * 借助.commons.beanutils转换map到Javabean
 	 * @param map

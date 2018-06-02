@@ -15,6 +15,14 @@
 		<result column="iconCls" property="iconCls" />
 		<result column="fatherId" property="fatherId" />
 	</resultMap>
+	<!-- 承接部门或者组信息的list -->
+	<resultMap type="com.gr.blog.dept.model.DeptModel" id="deptOrGroupList">
+		<id column="gid" property="dgId"/>
+		<result column="g_name" property="dgName"/>
+		<result column="create_g_people" property="operate" />
+		<result column="create_g_time" property="operateTime" javaType="date"/>
+	</resultMap>
+	
 	<!-- 配置查询父类节点的List -->
 	<resultMap type="com.gr.blog.mean.model.MeanModel" id="fatherList">
 		<id column="menuid" property="id"/>
@@ -49,4 +57,15 @@
 		insert into menu_tree(text,isleaf,url,iconCls,fatherId,operate,operate_time) 
 		values(#{text},#{leaf},#{url},#{iconCls},#{fatherId},#{operate},#{operateTime});
 	</insert>
+	
+	<select id="selectDeptByMenuId" parameterType="java.lang.String" resultMap="deptOrGroupList">
+		SELECT dg.`gid`,dg.`g_name`,dg.`create_g_people`,dg.`create_g_time` 
+		FROM `dept_or_group` dg,`menu_dept_or_group` mdg
+		WHERE mdg.`dgid` = dg.`gid`
+		AND mdg.`menuid` = #{menuId}
+	</select>
+	
+	<select id="selectUrlIsNotNullMenu" parameterType="java.lang.String" resultMap="MenuList">
+		SELECT mt.`id`,mt.`text`,mt.`url` FROM `menu_tree` mt WHERE mt.url &lt;&gt; #{mtUrl};
+	</select>
 </mapper>

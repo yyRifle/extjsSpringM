@@ -23,4 +23,7 @@ public interface MeanDao {
 	public int insertMenuInfoToDB(Map<String,Object> menuMap);
 
 	public int selectFatherIdByName(String fatherName);
+
+	public List<MeanModel> selectUrlIsNotNullMenu(String mtUrl);
+
 }

@@ -21,7 +21,7 @@ Ext.onReady(function(){
 	/**
 	 * 创建承接数据的store
 	 */
-	var store = Ext.create('Ext.data.TreeStore',{
+	var indeMenuStore = Ext.create('Ext.data.TreeStore',{
 		model:model,
 		proxy:{
 			type:'ajax',
@@ -38,12 +38,12 @@ Ext.onReady(function(){
 	 * 加载菜单数据
 	 */
 	var leftTree = Ext.create('Ext.tree.Panel',{
-		title:'基础菜单',
+		title:'<span style="color:black"><font>基础菜单</font></span>',
 		width:180,
 		minWidth:90,
 		height:'100%',
 		region:'west',
-		store:store,
+		store:indeMenuStore,
 		collapsible: true,
 		animate : true,// 动画切换效果
 		rootVisible: false,//隐藏根节点
@@ -57,7 +57,7 @@ Ext.onReady(function(){
 				if (leaf) {
 					var newTab = Ext.create('Ext.panel.Panel',{
 						id:tableid,
-						title:text,
+						title:'<span style="color:black"><font>'+text+'</font></span>',
 						closable : true,
 						html:'<iframe width="100%" height="100%" scrolling="no" frameborder="0" src="'+url+'"></iframe>'
 					});
@@ -93,8 +93,8 @@ Ext.onReady(function(){
         width: '100%',
 		autoScroll : true,//选项卡过多时，允许滚动  
 		items:[{
-				iconCls: 'House',
-				title:'首页',
+				title:'<span style="color:black"><font>首页</font></span>',
+				icon: 'images/minico/home_with_smog_pipe.png',
 				html:'<iframe width="100%" height="100%" scrolling="no" frameborder="0" src="/extjsSpringM/index.html"></iframe>'
 			}]
 	});

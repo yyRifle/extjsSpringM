@@ -61,13 +61,10 @@ Ext.onReady(function(){
 		       { codeDivisionName: "core", codeDivisionValue: "core" }
 		       ]
 	});
-	var mianTab = Ext.create('Ext.grid.Panel',{
-		id:'mianTabId',
-		store:jiraStore,
-		height:580,
-		columnLines: true,
-		renderTo:Ext.getBody(),
-		tbar:[
+	
+	var tbar = Ext.create('Ext.toolbar.Toolbar',{
+		width:35,
+		items:[
 			{
 				xtype:'label',
 				text:'用户名'
@@ -122,8 +119,9 @@ Ext.onReady(function(){
 				id:'endTime'
 			},
 			{
-				xtype:'button',
-				text:'<img src="../../images/minico/find.png" alt="查询"/>',
+				text:'<span style="color:white;font-size:300">查询</span>',
+				style: 'background: #368ECE;border-color:#126DAF',
+				icon: '../../images/minico/search.png',
 				handler:function(){
 					var username=Ext.getCmp('username').getValue();
 					var phone=Ext.getCmp('jiarNm').getValue();
@@ -135,9 +133,9 @@ Ext.onReady(function(){
 				}
 			},
 			{
-				xtype:'button',
-				//text:'添加代码',
-				text:'<img src="../../images/minico/add.png" alt="添加代码"/>',
+				text:'<span style="color:white;font-size:300">添加代码</span>',
+				style: 'background: #368ECE;border-color:#126DAF',
+				icon: '../../images/minico/sign_add.png',
 				id:'newbuttonQuery',
 				handler:function(){
 					var win = Ext.create('Ext.window.Window',{
@@ -151,18 +149,21 @@ Ext.onReady(function(){
 					   	closable:true,     //隐藏关闭按钮;
 					    draggable:true,     //窗口可拖动;
 					    resizable: false,
-//					    items:[
-//					           {
-//					        	   title:"新增代码列表",
-//					        	   html:'<iframe style="width:100%; height:100%;" src="../jira/jiraS.html" frameborder="0" scrolling="auto"></iframe>',
-//					           }
-//					           ],
 					    items:[addUserPanelAddTab]
 					  });
 					  win.show();
 				}
-			}
-		],
+			}]
+	});
+	
+	new Ext.create('Ext.grid.Panel',{
+		id:'mianTabId',
+		store:jiraStore,
+		height:630,
+        autoScroll:true,
+		columnLines: true,
+		renderTo:Ext.getBody(),
+		tbar:tbar,
 		selModel: Ext.create("Ext.selection.CheckboxModel", {
 		    injectCheckbox: 1,//checkbox位于哪一列，默认值为0
 		    mode: "multi",//multi,simple,single；默认为多选multi
@@ -216,7 +217,7 @@ Ext.onReady(function(){
 	        	align: 'center',
 	        	renderer:function(value, metaData, record){
 	        		var uid = record.data.jid;
-	        		btnStr='<span>'+'<img src="../../images/minico/find.png" alt="查询" onclick=\"openmsg(\''+uid+'\');\"/></span>';  
+	        		btnStr='<span>'+'<img src="../../images/minico/search.png" alt="查看列表" onclick=\"openmsg(\''+uid+'\');\"/></span>';  
 	        		return btnStr;
 	        	}
 	        },
@@ -227,7 +228,7 @@ Ext.onReady(function(){
 	        	align: 'center',
 	        	renderer:function(value, metaData, record){
 	        		var uid = record.data.jid;
-	        		btnStr='<span>'+'<img src="../../images/minico/find.png" alt="查询" onclick=\"openmsgYli(\''+uid+'\');\"/></span>';  
+	        		btnStr='<span>'+'<img src="../../images/minico/search.png" alt="查看实现原理" onclick=\"openmsgYli(\''+uid+'\');\"/></span>';  
 	        		return btnStr;
 	        	}
 	        },
@@ -238,8 +239,8 @@ Ext.onReady(function(){
 			    align: 'center',
 			    renderer:function(value, metaData, record){
 			    	var uid = record.data.jid;
-			    	btnStr='<span>'+'<img src="../../images/minico/delete.png" alt="删除" onclick=\"deleteJiarInfo(\''+uid+'\');\"/>'+'&nbsp;&nbsp;'+
-			    	'<img src="../../images/minico/modify.png" alt="修改" onclick=\"openmsgs(\''+uid+'\');\"/></span>';  
+			    	btnStr='<span>'+'<img src="../../images/minico/sign_cacel.png" alt="删除" onclick=\"deleteJiarInfo(\''+uid+'\');\"/>'+'&nbsp;&nbsp;'+
+			    	'<img src="../../images/minico/editor.png" alt="修改" onclick=\"openmsgs(\''+uid+'\');\"/></span>';  
 			    	return btnStr;
 			    }
 	        }
@@ -354,7 +355,9 @@ Ext.onReady(function(){
 		buttonAlign: 'center',
 		buttons: [
         {
-            text: '保存',
+        	text:'<span style="color:white;font-size:300">保存</span>',
+			style: 'background: #368ECE;border-color:#126DAF',
+			icon: '../../images/minico/save.png',
             handler: function () {
             	var frm = Ext.getCmp("jiraSubmitId");
             	if (!frm.getForm().isValid()){
@@ -375,7 +378,9 @@ Ext.onReady(function(){
             	});
             }
         }, {
-            text: '关闭',
+        	text:'<span style="color:white;font-size:300">关闭</span>',
+			style: 'background: #368ECE;border-color:#126DAF',
+			icon: '../../images/minico/cancel.png',
             handler: function () {
             	Ext.getCmp("winCe").close(this);
             }
