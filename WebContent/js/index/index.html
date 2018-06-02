@@ -10,15 +10,44 @@
 <script type="text/javascript" src="script/extjs/ext-all.js"></script>
 <script type="text/javascript" src="script/extjs/bootstrap.js"></script>
 <script type="text/javascript" src="script/extjs/ext-lang-zh_CN.js"></script>
+<script type="text/javascript" src="script/jquery-1.8.2.min.js"></script>
 <script type="text/javascript" src="js/index/index-ext.js"></script>
-<script type="text/javascript" src="js/index/index-js.js"></script>
+<script type="text/javascript">
+Ext.onReady(function(){
+	Ext.Ajax.request({
+		url:"/extjsSpringM/userAction/getIndexUserModel.do",
+		mehtod:'get',
+		success : function(response, options) {
+			var userModel = JSON.parse(response.responseText);
+			var nickname = userModel.nickname;
+			$("#clogin").text(nickname);
+		},
+		failure : function(response, options) {
+			$("#clogin").text("<font color='red'>请登陆</font>");
+		}
 
+	});
+});
+</script>
+<style type="text/css">
+#topInfo span a{
+	text-decoration: none;
+	color: #999999;
+}
+#topInfo span a:HOVER{
+	text-decoration: none;
+	color: red;
+	font-weight: bold
+}
+</style>
 </head>
 <body>
 
 <div id="topDiv">
 	<div id="topInfo" class="topInfo">
-		<span id="userlogin"><a href="" id="clogin" onclick="userLogin();">登录</a></span> 联系我们 推出系统
+		<span id="userlogin"><a href="" id="clogin" onclick="userLogin();"></a></span>
+		<span><a>用户反馈</a></span>
+		<span><a href="/extjsSpringM/userAction/removeSessionUserModel.do">退出系统</a></span>
 	</div>
 	<div id="topBackground">
 		<img alt="logo图片" src="/extjsSpringM/images/index/topbj.png" height="38px">

@@ -71,9 +71,27 @@ Ext.onReady(function(){
 	            displayInfo: true
 	       }],
 	   	listeners: {
-	            'itemclick': function(view, record, item, index, e) {
-	           	
-	            	}
+	   		itemdblclick: function(view, record, item, index, e) {
+	        		deptId = record.data.dgId;
+		   			Ext.Ajax.request({
+		   				url:"/extjsSpringM/deptAction/addMenuAndDeptByID.do",
+		   				mehtod:'get',
+		   				params:{
+		   					"dgid":deptId,
+		   					"menuid":dgId
+		   				},
+		   				success : function(response, options) {
+		   					Ext.Msg.alert('提示', '删除成功');
+		   					window.location.reload();//刷新当前页面 
+		   					window.parent.location.reload();
+		   					
+		   				},
+		   				failure : function() {
+		   					Ext.Msg.alert('提示', '原因如下：' + action);
+		   				}
+		   			
+		   			});
+	            }
 	            
 	        }	
 	});

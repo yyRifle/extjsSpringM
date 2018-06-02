@@ -2,7 +2,11 @@
  * 用户管理界面的js
  * 
  */
+var iHBody;
+var iWBody;
 Ext.onReady(function(){
+	iHBody=document.body.clientHeight||document.documentElement.clientHeight;
+	iWBody=document.body.clientWidth||document.documentElement.clientWidth;
 	var model = Ext.define('userModel',{
 		extend:'Ext.data.Model',
 		fields:[
@@ -41,13 +45,12 @@ Ext.onReady(function(){
 	        { Name: "不可用", isenaled: 1 }
 	    ]
 	});
-	var mianTab = Ext.create('Ext.grid.Panel',{
+	new Ext.create('Ext.grid.Panel',{
 		id:'mianTabId',
 		store:userStore,
-		height:580,
+		height:iHBody,
 		columnLines: true,
 		renderTo:Ext.getBody(),
-    	//selType: "checkboxmodel",
 		tbar:[
 			{
 				xtype:'label',
@@ -92,8 +95,9 @@ Ext.onReady(function(){
 				id:'Email'
 			},
 			{
-				xtype:'button',
-				text:'查询',
+				text:'<span style="color:white;font-size:300">查询</span>',
+				style: 'background: #368ECE;border-color:#126DAF',
+				icon: '../../images/minico/search.png',
 				handler:function(){
 					var username=Ext.getCmp('username').getValue();
 					var phone=Ext.getCmp('phone').getValue();
@@ -105,16 +109,18 @@ Ext.onReady(function(){
 				}
 			},
 			{
-				xtype:'button',
-				text:'新增',
+				text:'<span style="color:white;font-size:300">新增用户</span>',
+				style: 'background: #368ECE;border-color:#126DAF',
+				icon: '../../images/minico/sign_add.png',
+				id:'newAddUserQuery',
 				handler:function(){
 					var win = Ext.create('Ext.window.Window',{
 						id:"winCe",
 					    title:'新增用户',       //弹出窗口内布局会充满整个窗口;
 					    layout: "fit", 
 					    modal: true, //是否模态窗口，默认为false
-					    width:380,          //设置窗口大小;
-					    height:280,
+					    width:iWBody-300,          //设置窗口大小;
+					    height:iHBody-100,
 					    closeAction:'hide', //点击右上角关闭按钮后会执行的操作;
 					   	closable:false,     //隐藏关闭按钮;
 					    draggable:true,     //窗口可拖动;
@@ -124,8 +130,9 @@ Ext.onReady(function(){
 					  win.show();
 				}
 			},{
-				xtype:'button',
-				text:'删除(可批量)',
+				text:'<span style="color:white;font-size:300">新增用户</span>',
+				style: 'background: #368ECE;border-color:#126DAF',
+				icon: '../../images/minico/sign_cacel.png',
 				handler:function(){
 					var grid = Ext.getCmp('mianTabId');
 					var records = grid.getSelectionModel().getSelection();
@@ -158,16 +165,17 @@ Ext.onReady(function(){
 		    enableKeyNav: true
 		}),
     	columns: [
-    		{ header: '序号', xtype: 'rownumberer', width: 40,height:20, align: 'center', sortable: false },
+    		{ header: '序号', xtype: 'rownumberer', width: '3%',height:20, align: 'center', sortable: false },
     		{ text: 'id',dataIndex:'uid',hidden:true},
-    		{ text: '姓名', dataIndex: 'username',align: 'center', sortable: false },
-	        { text: '昵称', dataIndex: 'nickname',align: 'center', sortable: false },
-	        { text: '年龄',dataIndex:'age',align: 'center',width:70 },
-	        { text: '电话', dataIndex: 'phone',align: 'center',width:80, sortable: false },
+    		{ text: '姓名', dataIndex: 'username', width: '5%',align: 'center', sortable: false },
+	        { text: '昵称', dataIndex: 'nickname', width: '7%',align: 'center', sortable: false },
+	        { text: '年龄(岁)',dataIndex:'age', width: '3%',align: 'center',width:70 },
+	        { text: '电话', dataIndex: 'phone', width: '10%',align: 'center',sortable: false },
 	        { 
 	        	text: '是否可用', 
 	        	dataIndex: 'isenable',
 	        	align: 'center',
+	        	width: '7%',
 	        	renderer:function(value){
 	        		 if(value=="0"){
 	                         return"<font color='green'>可用</font>";
@@ -176,8 +184,8 @@ Ext.onReady(function(){
 	                  }
 	        	}
 	        },
-	        { text: 'email', dataIndex: 'email',align: 'center', sortable: false },
-	        { text: '用户地址(显示默认)', dataIndex: 'addrid',width:220,align: 'center', sortable: false
+	        { text: 'email', dataIndex: 'email', width: '10%',align: 'center', sortable: false },
+	        { text: '用户地址(显示默认)', dataIndex: 'addrid', width: '20%',align: 'center', sortable: false
 	        	//添加监听事件，双击时修改用户地址
 //	        	listeners:{
 //	        		'ondbclick':function(dataview, record, item, index, e){
@@ -185,17 +193,17 @@ Ext.onReady(function(){
 //	        		}
 //	        	}
 	        },
-	        { text: '省份证', dataIndex: 'idCard',align: 'center',width:180, sortable: false },
+	        { text: '省份证', dataIndex: 'idCard', width: '15%',align: 'center',sortable: false },
 	        {
 	        	xtype:'gridcolumn',
-	        	width:120,
+	        	width: '10%',
 	        	dataIndex: 'operate',
 			    text: '操作栏',
 			    align: 'center',
 			    renderer:function(value, metaData, record){
 			    	var uid = record.data.uid;
-			        btnStr = '<span>'+'<a id=\"modify\" value=\"修改\" onclick=\"modeifyThisLine(\''+uid+'\')\" />修改</a>&nbsp;&nbsp'
-			        +'<a id=\"addAddr\" value=\"添加地址\" onclick=\"addAddr(\''+uid+'\')\" />新增地址</a></span>';
+			        btnStr = '<span><img src="../../images/minico/editor.png" alt="修改" onclick="modeifyThisLine('+uid+')" />&nbsp;&nbsp'
+			        +'<img src="../../images/minico/addAddr.png" alt="添加地址" onclick="addAddrToDB('+uid+')"/></span>';
 			        return btnStr;
 			    }
 	        }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,17 +31,21 @@ public class UserAction {
 	
 	@Resource
 	private UserService userService;
-	/**
-	 * 用户管理跳转到界面
-	 * @author:gbp
-	 * @return
-	 * 2018年1月13日 下午5:20:25
-	 */
-	@RequestMapping("userManager")
-	public String userManager(HttpServletRequest request){
-		return "user/userManager";
-	}
 	
+	/**
+	 * 退出系统的方法
+	 * @author:巩斌鹏
+	 * 2018年6月2日 下午4:34:42
+	 * @param request
+	 * @throws ServletException
+	 * @throws IOException
+	 * void
+	 */
+	@RequestMapping("removeSessionUserModel")
+	public String removeSessionUserModel(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException{
+		request.getSession().removeAttribute("userModel");
+		return "login";
+	}
 	/**
 	 * 显示所有用户的数据
 	 * @author:gbp
@@ -62,6 +67,11 @@ public class UserAction {
 		return userlist;
 	}
 	
+	@RequestMapping("getIndexUserModel")
+	public @ResponseBody UserModel getIndexUserModel(HttpServletRequest request){
+		UserModel uModel = (UserModel)request.getSession().getAttribute("userModel");
+		return uModel;
+	}
 	/**
 	 * 用户界面点击保存用户信息的方法
 	 * @author:gbp

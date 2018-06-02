@@ -35,6 +35,7 @@
 		delete from dept_or_group where gid = #{dgId}
 	</delete>
 	
+	<!-- 根据菜单id查询【存在】的部门 -->
 	<select id="selectExistingDept" parameterType="hashMap" resultMap="deptOrGroupList">
 		SELECT dg.`gid`,dg.`g_name` 
 		FROM `dept_or_group` dg,`menu_dept_or_group` mdg
@@ -43,7 +44,7 @@
 			AND mdg.`menuid` = #{dgId}
 		</if>
 	</select>
-	
+	<!-- 根据菜单id查询【不存在】的部门 -->
 	<select id="selectIsNotExistingDept" parameterType="hashMap" resultMap="deptOrGroupList">
 		SELECT dg.`gid`,dg.`g_name`  
 		FROM `dept_or_group` dg 
@@ -51,4 +52,16 @@
 			SELECT mdgh.dgid FROM menu_dept_or_group mdgh WHERE mdgh.menuid = #{dgId}
 		)
 	</select>
+	
+	<!-- 根据菜单id和部门id【移除】到菜单部门关系表 -->
+	<delete id="deleteMenuAndDeptByID" parameterType="hashMap">
+		delete from menu_dept_or_group where dgid = #{dgid} and menuid = #{menuid}
+	</delete>
+	<!-- 根据菜单id和部门id【插入】到菜单部门关系表 -->
+	<insert id="insertMenuDeptToDbById" parameterType="hashMap" >
+		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="mgid">
+          SELECT LAST_INSERT_ID()
+      	</selectKey>
+		insert into menu_dept_or_group(dgid,menuid,operate_time,operate) values (#{dgid},#{menuid},#{operateTime},#{operate});
+	</insert>
 </mapper>

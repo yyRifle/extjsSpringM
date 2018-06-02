@@ -1,8 +1,11 @@
 /**
  * 受页面js
  */
- 
+var iHBody;
+var iWBody;
 Ext.onReady(function(){
+	iHBody=document.body.clientHeight||document.documentElement.clientHeight;
+	iWBody=document.body.clientWidth||document.documentElement.clientWidth;
 	/**
 	 * 创建接受菜单数据的model
 	 */
@@ -41,7 +44,7 @@ Ext.onReady(function(){
 		title:'<span style="color:black">基础菜单</span>',
 		width:180,
 		minWidth:90,
-		height:'100%',
+		height:iHBody,
 		region:'west',
 		store:indeMenuStore,
 		collapsible: true,
@@ -88,7 +91,7 @@ Ext.onReady(function(){
 		region:'center',
 		plain: true,                        //True表示tab候选栏上没有背景图片（默认为false） 
 		border:false,
-		height: '100%',  
+		height: iHBody,  
         width: '100%',
 		autoScroll : true,//选项卡过多时，允许滚动  
 		items:[{
@@ -100,6 +103,7 @@ Ext.onReady(function(){
 	
 	//创建viewport
 	new Ext.create('Ext.container.Viewport',{
+		width:iWBody,
 		layout:'border',
 		items:[{
 			region:'north',

@@ -19,5 +19,9 @@ public interface DeptService {
 	List<DeptModel> showExistingDept(Map<String, Object> deptMap);
 	//部门权限管理界面点击权限分配时，展示【不存在】部门和菜单关系的数据
 	List<DeptModel> showIsNotExistingDept(Map<String, Object> deptMap);
+	//根据menuid和部门id移除他们的之间的关系
+	int removeMenuAndDeptByID(Map<String, Object> manuDeptMap);
+	//根据menuid和部门id插入他们的之间的关系
+	int insertMenuDeptToDbById(Map<String, Object> manuDeptMap);
 
 }

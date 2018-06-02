@@ -30,6 +30,53 @@ public class DeptAction {
 	@Qualifier("deptService")
 	private DeptService deptService;
 	
+	
+	/**
+	 * 移除菜单和部门的关系
+	 * @author:巩斌鹏
+	 * 2018年6月2日 下午3:26:43
+	 * @param request
+	 * void
+	 * @throws IOException 
+	 */
+	@RequestMapping("deptAction/removeMenuAndDeptByID")
+	public @ResponseBody void removeMenuAndDeptByID(HttpServletRequest request,HttpServletResponse response) throws IOException{
+		Map<String,String[]> allMap = request.getParameterMap();
+		Map<String,Object> manuDeptMap = new HashMap<String,Object>();
+
+		manuDeptMap = CollectionsUtil.MapArrayToMapObject(allMap, manuDeptMap);
+		int result = deptService.removeMenuAndDeptByID(manuDeptMap);
+		if (result > 0) {
+			response.getWriter().print("{ success: true, errors: {} }");
+		} else {
+			response.getWriter().print("{ success: true, errors: {info:'移除失败'} }");
+		}
+	}
+	/**
+	 * 移除菜单和部门的关系
+	 * @author:巩斌鹏
+	 * 2018年6月2日 下午3:26:43
+	 * @param request
+	 * void
+	 * @throws IOException 
+	 */
+	@RequestMapping("deptAction/addMenuAndDeptByID")
+	public @ResponseBody void addMenuAndDeptByID(HttpServletRequest request,HttpServletResponse response) throws IOException{
+		UserModel uModel = (UserModel)request.getSession().getAttribute("userModel");
+		Map<String,String[]> allMap = request.getParameterMap();
+		
+		Map<String,Object> manuDeptMap = new HashMap<String,Object>();
+		manuDeptMap = CollectionsUtil.MapArrayToMapObject(allMap, manuDeptMap);
+		manuDeptMap.put("operate", uModel.getUsername());
+		manuDeptMap.put("operateTime", CommonUtils.getStringCurrentTime());
+		
+		int result = deptService.insertMenuDeptToDbById(manuDeptMap);
+		if (result > 0) {
+			response.getWriter().print("{ success: true, errors: {} }");
+		} else {
+			response.getWriter().print("{ success: true, errors: {info:'添加失败'} }");
+		}
+	}
 	/**
 	 * 部门权限管理界面点击权限分配时，展示【已存在】部门和菜单关系的数据
 	 * @author:巩斌鹏
@@ -43,7 +90,7 @@ public class DeptAction {
 	 */
 	@RequestMapping("deptAction/showExistingDept")
 	@ResponseBody
-	public Map<String,Object> showExistingDept(final HttpServletRequest request,int page,final int start,final int limit){
+	public Map<String,Object> showExistingDept(HttpServletRequest request,int page,int start,int limit){
 		Map<String,Object> deptMap = new HashMap<String,Object>();
 		String dgId = request.getParameter("dgId");
 		deptMap.put("dgId", dgId);
@@ -104,7 +151,6 @@ public class DeptAction {
 		Map<String,Object> deptMap = new HashMap<String,Object>();
 		deptMap.put("start", start);
 		deptMap.put("limit", limit);
-		System.out.println("dept——————info："+deptService.showAllDept(deptMap)+"\n");
 		return deptService.showAllDept(deptMap);
 	}
 	

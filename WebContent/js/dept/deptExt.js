@@ -4,7 +4,11 @@
  * 用户管理界面的js
  * 
  */
+var iHBody;
+var iWBody;
 Ext.onReady(function(){
+	iHBody=document.body.clientHeight||document.documentElement.clientHeight;
+	iWBody=document.body.clientWidth||document.documentElement.clientWidth;
 	var deptAndGroupsModel = Ext.define('userModel',{
 		extend:'Ext.data.Model',
 		fields:[
@@ -30,17 +34,10 @@ Ext.onReady(function(){
 		},
 		autoLoad: true  //即时加载数据
 	});
-	var isEnableStore = Ext.create("Ext.data.Store", {
-	    fields: ["Name", "isenaled"],
-	    data: [
-	        { Name: "可用", isenaled: 0 },
-	        { Name: "不可用", isenaled: 1 }
-	    ]
-	});
-	var mianTab = Ext.create('Ext.grid.Panel',{
+	new Ext.create('Ext.grid.Panel',{
 		id:'mianTabId',
 		store:deptAndGroupStore,
-		height:580,
+		height:iHBody,
 		columnLines: true,
 		renderTo:Ext.getBody(),
 		tbar:[
@@ -63,7 +60,7 @@ Ext.onReady(function(){
 					var email=Ext.getCmp('Email').getValue();
 					var isenableSecond="second";//添加一个区分首次加载还是查询
 					
-					deptAndGroupStore.load({params:{username:username,phone:phone,isenable:isenable,isenableSecond:isenableSecond,email:email,start: 0, limit: 25}});	
+					deptAndGroupStore.load({params:{username:username,phone:phone,isenable:isenable,isenableSecond:isenableSecond,email:email,start: 0, limit: 20}});	
 				}
 			},
 			{
@@ -81,7 +78,6 @@ Ext.onReady(function(){
 					    closeAction:'hide', //点击右上角关闭按钮后会执行的操作;
 					   	closable:false,     //隐藏关闭按钮;
 					    draggable:true,     //窗口可拖动;
-					    resizable: false,
 					    items:[addDeptPanelAddTab]        //默认会生成Ext.Panel类型的对象;并且随窗口大小改变而改变;
 					  });
 					  win.show();
@@ -96,21 +92,19 @@ Ext.onReady(function(){
 		    enableKeyNav: true
 		}),
     	columns: [
-    		{ header: '序号', xtype: 'rownumberer', width: 40,height:20, align: 'center', sortable: false },
-    		{ text: 'id',dataIndex:'dgId',hidden:true},
-    		{ text: '部门名称', dataIndex: 'dgName',align: 'center', sortable: false },
-	        { text: '操作时间', dataIndex: 'operateTime',align: 'center', sortable: false },
-	        { text: '操作人',dataIndex:'operate',align: 'center',width:70 },
+    		{ header: '序号', xtype: 'rownumberer', width: 40,align: 'center', sortable: false},
+    		{ text: 'id', dataIndex:'dgId',hidden:true},
+    		{ text: '部门名称', dataIndex: 'dgName',align: 'center', sortable: false},
+	        { text: '操作时间', dataIndex: 'operateTime',format:'Y-m-d',align: 'center', sortable: false},
+	        { text: '操作人', dataIndex:'operate',align: 'center',width:70},
 	        {
-	        	xtype:'gridcolumn',
+	        	header: '操作栏',
+	        	dataIndex:'button',
 	        	width:120,
-	        	dataIndex: 'operate',
-			    text: '操作栏',
 			    align: 'center',
 			    renderer:function(value, metaData, record){
 			    	var dgId = record.data.dgId;
-			    	btnStr='<span>'+'<img src="../../images/minico/sign_remove.png" alt="删除" onclick=\"deleteDeptAndGroupInfo(\''+dgId+'\');\"/>'+'&nbsp;&nbsp;'+
-			    	'<img src="../../images/minico/editor.png" alt="修改" onclick=\"openmsgs(\''+uid+'\');\"/></span>';  
+			    	var btnStr='<span><img src="../../images/minico/sign_remove.png" alt="删除" onclick=\"deleteDeptAndGroupInfo(\''+dgId+'\');\"/></span>';  
 			    	return btnStr;
 			    }
 	        }
@@ -196,7 +190,6 @@ function deleteDeptAndGroupInfo(value){
 		failure : function(response, options) {
 			Ext.Msg.alert('提示', '原因如下：' + action);
 		}
-	
 	});
 }
 

@@ -56,4 +56,15 @@ public class DeptServiceImpl implements DeptService{
 		return deptDao.selectIsNotExistingDept(deptMap);
 	}
 
+	@Override
+	public int removeMenuAndDeptByID(Map<String, Object> manuDeptMap) {
+		
+		return deptDao.deleteMenuAndDeptByID(manuDeptMap);
+	}
+
+	@Override
+	public int insertMenuDeptToDbById(Map<String, Object> manuDeptMap) {
+		return deptDao.insertMenuDeptToDbById(manuDeptMap);
+	}
+
 }

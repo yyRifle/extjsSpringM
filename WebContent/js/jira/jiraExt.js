@@ -3,7 +3,11 @@
  * 
  */
 var jiraStore;
+var iHBody;
+var iWBody;
 Ext.onReady(function(){
+	iHBody=document.body.clientHeight||document.documentElement.clientHeight;
+	iWBody=document.body.clientWidth||document.documentElement.clientWidth;
 	var model = Ext.define('jiraModel',{
 		extend:'Ext.data.Model',
 		fields:[
@@ -63,7 +67,7 @@ Ext.onReady(function(){
 	});
 	
 	var tbar = Ext.create('Ext.toolbar.Toolbar',{
-		width:35,
+		height:30,
 		items:[
 			{
 				xtype:'label',
@@ -99,7 +103,7 @@ Ext.onReady(function(){
 			      	Ext.getCmp("OnlineId").setValue(1);
 			      }
 			   }
-			},
+			},'-',
 			{
 				xtype:'label',
 				text:'开始日期'
@@ -108,7 +112,7 @@ Ext.onReady(function(){
 				xtype:'datefield',
 				format : "Y-m-d H:i:s", 
 				id:'beginTime'
-			},
+			},'-',
 			{
 				xtype:'label',
 				text:'结束日期'
@@ -117,7 +121,7 @@ Ext.onReady(function(){
 				xtype:'datefield',
 				format : "Y-m-d H:i:s", 
 				id:'endTime'
-			},
+			},'-',
 			{
 				text:'<span style="color:white;font-size:300">查询</span>',
 				style: 'background: #368ECE;border-color:#126DAF',
@@ -131,7 +135,7 @@ Ext.onReady(function(){
 					
 					jiraStore.load({params:{username:username,phone:phone,isenable:isenable,isenableSecond:isenableSecond,email:email,start: 0, limit: 25}});	
 				}
-			},
+			},'-',
 			{
 				text:'<span style="color:white;font-size:300">添加代码</span>',
 				style: 'background: #368ECE;border-color:#126DAF',
@@ -143,7 +147,7 @@ Ext.onReady(function(){
 					    id:"addCodeLine",
 					    title:'新增代码列表',
 					    modal: true, //是否模态窗口，默认为false
-					    height: '100%',  
+					    height: iHBody-30,  
 		                width: 520,
 					    autoScroll: true, 
 					   	closable:true,     //隐藏关闭按钮;
@@ -155,11 +159,11 @@ Ext.onReady(function(){
 				}
 			}]
 	});
-	
 	new Ext.create('Ext.grid.Panel',{
 		id:'mianTabId',
 		store:jiraStore,
-		height:630,
+		height:iHBody,
+		width:iWBody,
         autoScroll:true,
 		columnLines: true,
 		renderTo:Ext.getBody(),
@@ -172,20 +176,20 @@ Ext.onReady(function(){
 		    enableKeyNav: true
 		}),
     	columns: [
-    		{ header: '序号', xtype: 'rownumberer', width: 30,height:15, sortable: false},
-	        { text: '姓名', dataIndex: 'username',width: 60,align: 'center',sortable: false},
-	        { text: 'jira号',dataIndex:'jiarNm',width:100,align: 'center',
+    		{ header: '序号', xtype: 'rownumberer', width: '3%',align: 'center', sortable: false},
+	        { text: '姓名', dataIndex: 'username',width:'7%',align: 'center',sortable: false},
+	        { text: 'jira号',dataIndex:'jiarNm',width:'10%',align: 'center',
 	        	renderer:function(value){
 	        		var r = value;
 	        		 return"<a href='http://192.168.100.9:9080/browse/"+r+"' target='_blank'><b>"+value+"</b></a>";
 	        	}
 	        },
-	        { text: '上线时间', dataIndex: 'onlineTime',align: 'center',width:120,format:'Y年m月d日',sortable: false },
+	        { text: '上线时间', dataIndex: 'onlineTime',align: 'center',width:'10%',format:'Y年m月d日',sortable: false },
 	        { 
 	        	text: '是否已上线', 
 	        	dataIndex: 'isOnline',
 	        	align: 'center',
-	        	width:100,
+	        	width:'10%',
 	        	renderer:function(value){
 	        		 if(value=="0"){
 	                         return"<font color='green'>已上线</font>";
@@ -198,7 +202,7 @@ Ext.onReady(function(){
 	        	text: '是否有sql脚本', 
 	        	dataIndex: 'isOwerSqlBat',
 	        	align: 'center',
-	        	width:120,
+	        	width:'10%',
 	        	renderer:function(value){
 	        		if(value=="0"){
 	        			return"<font color='red' style='size:3'>有脚本</font>";
@@ -207,13 +211,13 @@ Ext.onReady(function(){
 	        		}
 	        	}
 	        },
-	        { text: '代码层', dataIndex: 'codeDivision',width: 130,align: 'center', sortable: false },
-	        { text: '备注信息', dataIndex: 'codeNote',width:250,align: 'center', sortable: false},
+	        { text: '代码层', dataIndex: 'codeDivision',width: '10%',align: 'center', sortable: false },
+	        { text: '备注信息', dataIndex: 'codeNote',width:'20%',align: 'center', sortable: false},
 	        { text: 'jid',hidden:true, dataIndex: 'jid'},
 	        {
 	        	header:'查看列表',
 	        	dataIndex:"button", 
-	        	width:60,
+	        	width:'5%',
 	        	align: 'center',
 	        	renderer:function(value, metaData, record){
 	        		var uid = record.data.jid;
@@ -224,7 +228,7 @@ Ext.onReady(function(){
 	        {
 	        	header:'查看原理',
 	        	dataIndex:"button", 
-	        	width:60,
+	        	width:'5%',
 	        	align: 'center',
 	        	renderer:function(value, metaData, record){
 	        		var uid = record.data.jid;
@@ -235,12 +239,12 @@ Ext.onReady(function(){
 	        {
 	        	header:'操作栏',
 	        	dataIndex:"button", 
-	        	width:80,
+	        	width:'7.5%',
 			    align: 'center',
 			    renderer:function(value, metaData, record){
 			    	var uid = record.data.jid;
-			    	btnStr='<span>'+'<img src="../../images/minico/sign_cacel.png" alt="删除" onclick=\"deleteJiarInfo(\''+uid+'\');\"/>'+'&nbsp;&nbsp;'+
-			    	'<img src="../../images/minico/editor.png" alt="修改" onclick=\"openmsgs(\''+uid+'\');\"/></span>';  
+			    	btnStr='<span>'+'<img src="../../images/minico/sign_cacel.png" alt="删除" onclick="deleteJiarInfo('+uid+');"/>'+'&nbsp;&nbsp;'+
+			    	'<img src="../../images/minico/editor.png" alt="修改" onclick="openmsgs('+uid+');"/></span>';  
 			    	return btnStr;
 			    }
 	        }

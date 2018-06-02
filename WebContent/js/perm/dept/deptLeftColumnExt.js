@@ -73,39 +73,25 @@ Ext.onReady(function(){
 	       }],
 	   	listeners: {
 	   		itemdblclick: function(view, record, item, index, e) {
-	   			deptId = record.date.dgId;
+	   			deptId = record.data.dgId;
 	   			Ext.Ajax.request({
-	   				url:"/extjsSpringM/jiraAction/queryCodeLineByjid.do",
+	   				url:"/extjsSpringM/deptAction/removeMenuAndDeptByID.do",
 	   				mehtod:'get',
 	   				params:{
-	   					jid:value
+	   					"dgid":deptId,
+	   					"menuid":dgId
 	   				},
 	   				success : function(response, options) {
-	   					var jira = JSON.parse(response.responseText);
-	   					var sis = "<font size='3'>"+jira[0].codeLine+"</font>"
-	   					var win = Ext.create('Ext.window.Window',{
-	   					    layout: "fit", 
-	   					    modal: true, //是否模态窗口，默认为false
-	   					    width:750,          //设置窗口大小;
-	   					    height:400,
-	   					   	closable:true,     //隐藏关闭按钮;
-	   					    draggable:true,     //窗口可拖动;
-	   					    resizable: false,
-	   					    items:[
-	   					           {
-	   					        	   title:"代码列表",
-	   					        	   html:sis}
-	   					           ],
-	   					  });
-	   					  win.show();
+	   					Ext.Msg.alert('提示', '删除成功');
+	   					window.location.reload();//刷新当前页面 
+	   					window.parent.location.reload();
+	   					
 	   				},
 	   				failure : function() {
-	   				
+	   					Ext.Msg.alert('提示', '原因如下：' + action);
 	   				}
 	   			
 	   			});
-	            	window.location.reload();//刷新当前页面 
-	            	window.parent.location.reload();
 	            }
 	            
 	        }	

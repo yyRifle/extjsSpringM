@@ -18,5 +18,9 @@ public interface DeptDao {
 	List<DeptModel> selectExistingDept(Map<String, Object> deptMap);
 
 	List<DeptModel> selectIsNotExistingDept(Map<String, Object> deptMap);
+
+	int deleteMenuAndDeptByID(Map<String, Object> manuDeptMap);
+
+	int insertMenuDeptToDbById(Map<String, Object> manuDeptMap);
 	
 }

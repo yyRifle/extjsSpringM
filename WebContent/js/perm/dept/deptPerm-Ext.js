@@ -1,7 +1,11 @@
 /**
  * 菜单管理extjs gbp 2018年1月23日 11:23:38
  */
+var iHBody;
+var iWBody;
 Ext.onReady(function(){
+	iHBody=document.body.clientHeight||document.documentElement.clientHeight;
+	iWBody=document.body.clientWidth||document.documentElement.clientWidth;
 	var menuMode = Ext.define('treeModel',{
 		extend:'Ext.data.Model',
 		id:"treeModelId",
@@ -30,7 +34,7 @@ Ext.onReady(function(){
 		}
 	});
 	var tbar = Ext.create('Ext.toolbar.Toolbar',{
-		width:35,
+		height:30,
 		items:[
 				{
 					xtype:'label',
@@ -58,7 +62,7 @@ Ext.onReady(function(){
 	new Ext.create('Ext.grid.Panel',{
 		id:'mianTabId',
 		store:menuStore,
-		height:620,
+		height:iHBody,
 		columnLines: true,
 		renderTo:Ext.getBody(),
 		tbar:tbar,
@@ -70,13 +74,13 @@ Ext.onReady(function(){
 		    enableKeyNav: true
 		}),
     	columns: [
-    		{ header: '序号', xtype: 'rownumberer', width: 40,height:20, align: 'center', sortable: false },
+    		{ header: '序号', xtype: 'rownumberer', width: '3%', align: 'center', sortable: false },
     		{ text: 'id',dataIndex:'id',width:70,hidden:true},
-	        { text: '菜单名', dataIndex: 'text',align: 'center', sortable: false },
-	        { text: 'URL', dataIndex: 'url',align: 'left',width:250, sortable: false },
+	        { text: '菜单名', dataIndex: 'text',width: '10%',align: 'center', sortable: false },
+	        { text: 'URL', dataIndex: 'url',align: 'left',width: '25%', sortable: false },
 	        {
 	        	xtype:'gridcolumn',
-	        	width:120,
+	        	width:'10%',
 	        	dataIndex: 'operate',
 			    text: '查看权限',
 			    align: 'center',
