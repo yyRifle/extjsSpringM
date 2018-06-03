@@ -16,8 +16,9 @@
 		limit #{start},#{limit}
 	</select>
 	
-	<insert id="insertDeptInfoToDB" parameterType="com.gr.blog.dept.model.DeptModel">
-		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="gid">
+	<!-- 新增部门插入到数据库 -->
+	<insert id="insertDeptInfoToDB" parameterType="hashMap">
+		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
           SELECT LAST_INSERT_ID()
       	</selectKey>
 		insert into dept_or_group(g_name,create_g_people,create_g_time) values 
@@ -35,24 +36,6 @@
 		delete from dept_or_group where gid = #{dgId}
 	</delete>
 	
-	<!-- 根据菜单id查询【存在】的部门 -->
-	<select id="selectExistingDept" parameterType="hashMap" resultMap="deptOrGroupList">
-		SELECT dg.`gid`,dg.`g_name` 
-		FROM `dept_or_group` dg,`menu_dept_or_group` mdg
-		WHERE dg.`gid` = mdg.`dgid`
-		<if test="dgId != null and dgId != ''">
-			AND mdg.`menuid` = #{dgId}
-		</if>
-	</select>
-	<!-- 根据菜单id查询【不存在】的部门 -->
-	<select id="selectIsNotExistingDept" parameterType="hashMap" resultMap="deptOrGroupList">
-		SELECT dg.`gid`,dg.`g_name`  
-		FROM `dept_or_group` dg 
-		WHERE dg.`gid` NOT IN (
-			SELECT mdgh.dgid FROM menu_dept_or_group mdgh WHERE mdgh.menuid = #{dgId}
-		)
-	</select>
-	
 	<!-- 根据菜单id和部门id【移除】到菜单部门关系表 -->
 	<delete id="deleteMenuAndDeptByID" parameterType="hashMap">
 		delete from menu_dept_or_group where dgid = #{dgid} and menuid = #{menuid}
@@ -64,4 +47,8 @@
       	</selectKey>
 		insert into menu_dept_or_group(dgid,menuid,operate_time,operate) values (#{dgid},#{menuid},#{operateTime},#{operate});
 	</insert>
+	
+	<select id="selectMenuAndDeptLinkById" parameterType="hashMap" resultType="int">
+		SELECT COUNT(mgid) FROM `menu_dept_or_group` WHERE dgid = #{dgid} and menuid = #{menuid}
+	</select>
 </mapper>

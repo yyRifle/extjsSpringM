@@ -4,22 +4,26 @@
  * 用户管理界面的js
  * 
  */
+var deptAndGroupStore;
 var iHBody;
 var iWBody;
 Ext.onReady(function(){
 	iHBody=document.body.clientHeight||document.documentElement.clientHeight;
 	iWBody=document.body.clientWidth||document.documentElement.clientWidth;
-	var deptAndGroupsModel = Ext.define('userModel',{
+	var deptAndGroupsModel = Ext.define('deptModel',{
 		extend:'Ext.data.Model',
 		fields:[
 				{name:'dgId',type:'String'},
 		        {name:'dgName',type:'String'},
 		        {name:'operate',type:'String'},
-		        {name:'operateTime',type:'Date'}
-		       ]
+		        {name:'operateTime',type:'Date',convert:function(value){  
+			            var createTime = Ext.Date.format(new Date(value),"Y-m-d H:i:s");
+			            return createTime;  
+		        }
+		        }]
 	});
 	
-	var deptAndGroupStore = Ext.create('Ext.data.Store',{
+	deptAndGroupStore = Ext.create('Ext.data.Store',{
 		model:deptAndGroupsModel,
 		id:"deptAndGroupsId",
 		pageSize: 20,  //页容量5条数据
@@ -28,7 +32,7 @@ Ext.onReady(function(){
 			url:'/extjsSpringM/deptAction/showAllDept.do',
 			reader:{
 				type:'json',
-				root: 'rows',  //数据
+				root: 'root',  //数据
 				totalProperty: 'total'
 			}
 		},
@@ -54,13 +58,8 @@ Ext.onReady(function(){
 				style: 'background: #368ECE;border-color:#126DAF',
 				icon: '../../images/minico/search.png',
 				handler:function(){
-					var username=Ext.getCmp('username').getValue();
-					var phone=Ext.getCmp('phone').getValue();
-					var isenable=Ext.getCmp('ComboBoxId').getValue();
-					var email=Ext.getCmp('Email').getValue();
-					var isenableSecond="second";//添加一个区分首次加载还是查询
-					
-					deptAndGroupStore.load({params:{username:username,phone:phone,isenable:isenable,isenableSecond:isenableSecond,email:email,start: 0, limit: 20}});	
+					var dgName=Ext.getCmp('dgName').getValue();
+					deptAndGroupStore.load({params:{dgName:dgName,start: 0, limit: 20}});	
 				}
 			},
 			{
@@ -75,7 +74,7 @@ Ext.onReady(function(){
 					    modal: true, //是否模态窗口，默认为false
 					    width:380,          //设置窗口大小;
 					    height:280,
-					    closeAction:'hide', //点击右上角关闭按钮后会执行的操作;
+					    //closeAction:'hide', //点击右上角关闭按钮后会执行的操作;
 					   	closable:false,     //隐藏关闭按钮;
 					    draggable:true,     //窗口可拖动;
 					    items:[addDeptPanelAddTab]        //默认会生成Ext.Panel类型的对象;并且随窗口大小改变而改变;
@@ -92,15 +91,15 @@ Ext.onReady(function(){
 		    enableKeyNav: true
 		}),
     	columns: [
-    		{ header: '序号', xtype: 'rownumberer', width: 40,align: 'center', sortable: false},
+    		{ header: '序号', xtype: 'rownumberer', width:'3%',align: 'center', sortable: false},
     		{ text: 'id', dataIndex:'dgId',hidden:true},
-    		{ text: '部门名称', dataIndex: 'dgName',align: 'center', sortable: false},
-	        { text: '操作时间', dataIndex: 'operateTime',format:'Y-m-d',align: 'center', sortable: false},
-	        { text: '操作人', dataIndex:'operate',align: 'center',width:70},
+    		{ text: '部门名称', dataIndex: 'dgName',width: '20%',align: 'center', sortable: false},
+	        { text: '操作时间', dataIndex: 'operateTime',width: '20%',align: 'center', sortable: false},
+	        { text: '操作人', dataIndex:'operate',width: '15%',align: 'center',width:70},
 	        {
 	        	header: '操作栏',
 	        	dataIndex:'button',
-	        	width:120,
+	        	width: '10%',
 			    align: 'center',
 			    renderer:function(value, metaData, record){
 			    	var dgId = record.data.dgId;
@@ -154,12 +153,12 @@ Ext.onReady(function(){
             		url:'/extjsSpringM/deptAction/addDeptInfoToDb.do',
             		method:'post',
             		success: function(form, action) {
-			           Ext.Msg.alert('提示', '保存成功');
+			           Ext.Msg.alert('提示', '添加成功');
 			           Ext.getCmp("winCe").close(this);
 			           deptAndGroupStore.load();
 			         },
 			        failure: function(form, action) {
-			             Ext.Msg.alert('提示', '原因如下：' + action.result.errors.info);
+			             Ext.Msg.alert('提示', '添加失败：');
 			        }
             		
             	});
@@ -177,19 +176,26 @@ Ext.onReady(function(){
 });
 //删除部门或者组信息
 function deleteDeptAndGroupInfo(value){
-	Ext.Ajax.request({
-		url:"/extjsSpringM/deptAction/deleteDeptAndGroupInfo.do",
-		mehtod:'get',
-		params:{
-			dgId:value
-		},
-		success : function(response, options) {
-			Ext.Msg.alert('提示', '删除成功');
-			jiraStore.load();
-		},
-		failure : function(response, options) {
-			Ext.Msg.alert('提示', '原因如下：' + action);
-		}
+	Ext.MessageBox.confirm("提示", "你确定要删除此项？", function(btnId){
+		if (btnId == "yes") {  
+	        Ext.Ajax.request({
+	        	url:"/extjsSpringM/deptAction/deleteDeptAndGroupInfo.do",
+	        	mehtod:'get',
+	        	params:{
+	        		dgId:value
+	        	},
+	        	success : function(response, options) {
+	        		Ext.Msg.alert('提示', '删除成功');
+	        		deptAndGroupStore.load();
+	        	},
+	        	failure : function(response, options) {
+	        		Ext.Msg.alert('提示', '删除失败');
+	        	}
+	        });
+	    }  
+	    else if (btnId == "no") {  
+	       return;
+	    }  
 	});
 }
 

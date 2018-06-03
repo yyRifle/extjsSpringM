@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.gr.blog.dept.dao.DeptDao;
 import com.gr.blog.dept.model.DeptModel;
 import com.gr.blog.dept.service.DeptService;
+import com.gr.blog.mean.model.MeanModel;
 import com.gr.blog.utils.CollectionsUtil;
 import com.gr.blog.utils.CommonUtils;
 
@@ -30,10 +31,9 @@ public class DeptServiceImpl implements DeptService{
 	}
 
 	@Override
-	public int addDeptInfoToDb(DeptModel dModel) {
-		Date operateTime = CommonUtils.getDateCurrentTime();
-		dModel.setOperateTime(operateTime);
-		return deptDao.insertDeptInfoToDB(dModel);
+	public int addDeptInfoToDb(Map<String,Object> map) {
+		map.put("operateTime", CommonUtils.getDateCurrentTime());
+		return deptDao.insertDeptInfoToDB(map);
 	}
 
 	@Override
@@ -47,24 +47,20 @@ public class DeptServiceImpl implements DeptService{
 	}
 
 	@Override
-	public List<DeptModel> showExistingDept(Map<String, Object> deptMap) {
-		return deptDao.selectExistingDept(deptMap);
-	}
-
-	@Override
-	public List<DeptModel> showIsNotExistingDept(Map<String, Object> deptMap) {
-		return deptDao.selectIsNotExistingDept(deptMap);
-	}
-
-	@Override
-	public int removeMenuAndDeptByID(Map<String, Object> manuDeptMap) {
+	public int removeMenuAndDeptByID(Map<String, Object> map) {
 		
-		return deptDao.deleteMenuAndDeptByID(manuDeptMap);
+		return deptDao.deleteMenuAndDeptByID(map);
 	}
 
 	@Override
-	public int insertMenuDeptToDbById(Map<String, Object> manuDeptMap) {
-		return deptDao.insertMenuDeptToDbById(manuDeptMap);
+	public int insertMenuDeptToDbById(Map<String, Object> map) {
+		return deptDao.insertMenuDeptToDbById(map);
 	}
+
+	@Override
+	public int findMenuAndDeptLinkById(Map<String, Object> map) {
+		return deptDao.selectMenuAndDeptLinkById(map);
+	}
+
 
 }

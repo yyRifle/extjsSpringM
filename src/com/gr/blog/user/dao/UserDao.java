@@ -22,5 +22,13 @@ public interface UserDao {
 
 	List<Map<String, Object>> selectUserByUsername(String username);
 
+	List<UserModel> selectLeftUserInfo(Map<String, Object> deptMap);
+
+	List<UserModel> selectRightUserInfo(Map<String, Object> deptMap);
+
+	int insertGroupOrDeptAndUserByID(Map<String, Object> dguMap);
+
+	int deleteGroupOrDeptAndUserByID(Map<String, Object> dguMap);
+
 
 }

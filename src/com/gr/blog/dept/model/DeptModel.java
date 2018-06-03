@@ -11,6 +11,8 @@ public class DeptModel {
 	private String operate;//操作人
 	
 	private Date operateTime;
+	
+	private String deptMenuLink;//部门与菜单的关系
 
 	public int getDgId() {
 		return dgId;
@@ -42,6 +44,15 @@ public class DeptModel {
 
 	public void setOperateTime(Date operateTime) {
 		this.operateTime = operateTime;
+	}
+
+	
+	public String getDeptMenuLink() {
+		return deptMenuLink;
+	}
+
+	public void setDeptMenuLink(String deptMenuLink) {
+		this.deptMenuLink = deptMenuLink;
 	}
 
 	@Override

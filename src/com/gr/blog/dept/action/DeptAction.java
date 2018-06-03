@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,9 +18,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.gr.blog.dept.model.DeptModel;
 import com.gr.blog.dept.service.DeptService;
+import com.gr.blog.mean.model.MeanModel;
+import com.gr.blog.mean.service.MeanService;
 import com.gr.blog.user.model.UserModel;
 import com.gr.blog.utils.CollectionsUtil;
 import com.gr.blog.utils.CommonUtils;
+import com.gr.blog.utils.ResponseUtils;
 
 @Controller
 public class DeptAction {
@@ -30,6 +34,75 @@ public class DeptAction {
 	@Qualifier("deptService")
 	private DeptService deptService;
 	
+	@Autowired
+	@Qualifier(value="meanService")
+	private MeanService meanService;
+	/**
+	 * 查询menu中只有子菜单的数据
+	 * @author:巩斌鹏
+	 * 2018年6月1日 上午11:05:38
+	 * @return
+	 * List<MeanModel>
+	 */
+	@RequestMapping("deptAction/showAllDeptMenuLink")
+	public @ResponseBody Map<String,Object> showAllDeptMenuLink(HttpServletRequest request,int page,int start,int limit){
+		Map<String,Object> deptMap = new HashMap<String,Object>();
+		deptMap.put("start", start);
+		deptMap.put("limit", limit);
+		List<DeptModel> deptList = deptService.showAllDept(deptMap);//查询出所有的部门信息
+		
+		Map<String,Object> reMap = getRepeatMenuIdInfo();
+		
+		Map<String,Object> resultMap =new HashMap<>();
+		if (CollectionsUtil.isListNotEmpty(deptList)){
+			for (DeptModel menu : deptList) {
+				int dgid = menu.getDgId();
+				if(null != reMap && reMap.size() >0) {
+					String value = CollectionsUtil.getStringByMap(reMap, dgid+"");
+					menu.setDeptMenuLink(value);
+				}
+				resultMap.put("root", deptList);
+			}
+			resultMap.put("total", deptList.size());
+		}
+		logger.error("[查询menu中只有子菜单的数据]:"+resultMap+"\n");
+		return resultMap;
+	}
+	
+	
+	/**
+	 * 查询出所有的对应菜单与部门的关系
+	 * @author:巩斌鹏
+	 * 2018年6月3日 上午9:05:55
+	 * @return
+	 * Map<String,Object>
+	 */
+	public Map<String,Object> getRepeatMenuIdInfo(){
+		Map<String,Object> resultMap = new HashMap<>();
+		TreeSet<Integer> ts=new TreeSet<>();
+		List<Map<String,Object>> menuAndDeptList = meanService.findMenuAndDept();
+		if (CollectionsUtil.isListNotEmpty(menuAndDeptList)){
+			String tt = "";
+			for (Map<String,Object> map : menuAndDeptList) {
+				int dgid = (int) map.get("dgid");
+				ts.add(dgid);
+				if (ts.contains(dgid)) {
+					String value = (String) map.get("menuName");
+					String resultTT = (String) resultMap.get(dgid+"");
+					if (CommonUtils.isNotEmpty(resultTT)) {
+						tt = resultTT+","+ value;
+					} else {
+						tt = value;
+					}
+				} 
+				resultMap.put(dgid+"", tt);
+				tt = "";
+			}
+			logger.error("[查询出所有的部门与菜单的关系]:"+resultMap);
+			return (Map<String, Object>)resultMap;
+		}
+		return null;
+	}
 	
 	/**
 	 * 移除菜单和部门的关系
@@ -46,14 +119,10 @@ public class DeptAction {
 
 		manuDeptMap = CollectionsUtil.MapArrayToMapObject(allMap, manuDeptMap);
 		int result = deptService.removeMenuAndDeptByID(manuDeptMap);
-		if (result > 0) {
-			response.getWriter().print("{ success: true, errors: {} }");
-		} else {
-			response.getWriter().print("{ success: true, errors: {info:'移除失败'} }");
-		}
+		ResponseUtils.returnResult(response, result);
 	}
 	/**
-	 * 移除菜单和部门的关系
+	 * 添加菜单和部门的关系
 	 * @author:巩斌鹏
 	 * 2018年6月2日 下午3:26:43
 	 * @param request
@@ -67,71 +136,18 @@ public class DeptAction {
 		
 		Map<String,Object> manuDeptMap = new HashMap<String,Object>();
 		manuDeptMap = CollectionsUtil.MapArrayToMapObject(allMap, manuDeptMap);
+		logger.error("[添加菜单和部门的关系-查询时map]:"+manuDeptMap);
+		int selectNum = deptService.findMenuAndDeptLinkById(manuDeptMap);
+		if (selectNum > 0) {
+			response.getWriter().print("{ success: true, errors: {info:'添加失败！他们之间已存在关联关系'} }");
+			return;
+		}
 		manuDeptMap.put("operate", uModel.getUsername());
 		manuDeptMap.put("operateTime", CommonUtils.getStringCurrentTime());
 		
+		logger.error("[添加菜单和部门的关系-插入时map]:"+manuDeptMap);
 		int result = deptService.insertMenuDeptToDbById(manuDeptMap);
-		if (result > 0) {
-			response.getWriter().print("{ success: true, errors: {} }");
-		} else {
-			response.getWriter().print("{ success: true, errors: {info:'添加失败'} }");
-		}
-	}
-	/**
-	 * 部门权限管理界面点击权限分配时，展示【已存在】部门和菜单关系的数据
-	 * @author:巩斌鹏
-	 * 2018年6月1日 上午11:33:07
-	 * @param request
-	 * @param page
-	 * @param start
-	 * @param limit
-	 * @return
-	 * List<DeptModel>
-	 */
-	@RequestMapping("deptAction/showExistingDept")
-	@ResponseBody
-	public Map<String,Object> showExistingDept(HttpServletRequest request,int page,int start,int limit){
-		Map<String,Object> deptMap = new HashMap<String,Object>();
-		String dgId = request.getParameter("dgId");
-		deptMap.put("dgId", dgId);
-		deptMap.put("start", start);
-		deptMap.put("limit", limit);
-		List<DeptModel> deptList = deptService.showExistingDept(deptMap);
-		deptMap.put("root", deptList);
-		if (CollectionsUtil.isListNotEmpty(deptList)){
-			deptMap.put("total", deptList.size());
-		} 
-		deptMap.put("total", "");
-		System.out.println("左边的查询数据："+deptMap);
-		return deptMap;
-	}
-	/**
-	 * 部门权限管理界面点击权限分配时，展示【不存在】部门和菜单关系的数据
-	 * @author:巩斌鹏
-	 * 2018年6月1日 上午11:33:07
-	 * @param request
-	 * @param page
-	 * @param start
-	 * @param limit
-	 * @return
-	 * List<DeptModel>
-	 */
-	@RequestMapping("deptAction/showIsNotExistingDept")
-	@ResponseBody
-	public Map<String,Object> showIsNotExistingDept(HttpServletRequest request,int page,int start,int limit){
-		Map<String,Object> deptMap = new HashMap<String,Object>();
-		String dgId = request.getParameter("dgId");
-		deptMap.put("dgId", dgId);
-		deptMap.put("start", start);
-		deptMap.put("limit", limit);
-		List<DeptModel> deptList = deptService.showIsNotExistingDept(deptMap);
-		deptMap.put("root", deptList);
-		if (CollectionsUtil.isListNotEmpty(deptList)){
-			deptMap.put("total", deptList.size());
-		} 
-		deptMap.put("total", "");
-		System.out.println("右边的查询数据："+deptMap);
-		return deptMap;
+		ResponseUtils.returnResult(response, result);
 	}
 	
 	/**
@@ -151,7 +167,9 @@ public class DeptAction {
 		Map<String,Object> deptMap = new HashMap<String,Object>();
 		deptMap.put("start", start);
 		deptMap.put("limit", limit);
-		return deptService.showAllDept(deptMap);
+		List<DeptModel> resultMode = deptService.showAllDept(deptMap);
+		logger.error("[查询所有的部门信息]："+resultMode);
+		return resultMode;
 	}
 	
 	/**
@@ -166,16 +184,14 @@ public class DeptAction {
 	 */
 	@RequestMapping("deptAction/addDeptInfoToDb")
 	@ResponseBody
-	private void addDeptInfoToDb(HttpServletRequest request,HttpServletResponse response,DeptModel dModel) throws IOException{
+	private void addDeptInfoToDb(HttpServletRequest request,HttpServletResponse response) throws IOException{
+		Map<String,Object> deptMap = new HashMap<String,Object>();
+		String dgName = request.getParameter("dgName");
 		UserModel usermode = (UserModel) request.getSession().getAttribute("userModel");
-		String operate = usermode.getUsername();
-		dModel.setOperate(operate);
-		int intsertNm = deptService.addDeptInfoToDb(dModel);
-		if (intsertNm > 0) {
-			response.getWriter().print("{ success: true, errors: {} }");
-		} else {
-			response.getWriter().print("{ success: true, errors: {info:'添加失败'} }");
-		}
+		deptMap.put("dgName", dgName);
+		deptMap.put("operate", usermode.getUsername());
+		int intsertNm = deptService.addDeptInfoToDb(deptMap);
+		ResponseUtils.returnResult(response, intsertNm);
 	}
 	
 	/**
@@ -197,10 +213,6 @@ public class DeptAction {
 			return;
 		}
 		int deptNum = deptService.deleteDeptAndGroupInfo(dgId);
-		if (deptNum > 0) {
-			response.getWriter().print("{ success: true, errors: {} }");
-		} else {
-			response.getWriter().print("{ success: true, errors: {info:'删除失败'} }");
-		}
+		ResponseUtils.returnResult(response, deptNum);
 	}
 }

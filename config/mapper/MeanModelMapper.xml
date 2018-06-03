@@ -28,6 +28,11 @@
 		<id column="menuid" property="id"/>
 		<result column="text" property="text" />
 	</resultMap>
+	<!-- 查询菜单与部门权限时用到 -->
+	<resultMap id="getMenuAndDept" type="HashMap">
+		<result column="dgid" property="dgid"/>
+		<result column="menuName" property="menuName"/>
+	</resultMap>
 	
 	<select id="selectTotalMenu" resultType="java.lang.Integer">
 		select count(id) total from menu_tree
@@ -65,7 +70,30 @@
 		AND mdg.`menuid` = #{menuId}
 	</select>
 	
-	<select id="selectUrlIsNotNullMenu" parameterType="java.lang.String" resultMap="MenuList">
-		SELECT mt.`id`,mt.`text`,mt.`url` FROM `menu_tree` mt WHERE mt.url &lt;&gt; #{mtUrl};
+	<select id="selectMenuAndDept" resultMap="getMenuAndDept">
+		SELECT mdg.`dgid`,mt.`text` AS menuName 
+		FROM `menu_tree` mt,`menu_dept_or_group` mdg 
+		WHERE mt.`id` = mdg.`menuid`
+	</select>
+	<!-- 查询部门与菜单关系是 【左边】的数据 -->
+	<select id="selectShowLeftManuDate" resultMap="MenuList" parameterType="HashMap">
+		SELECT mt.`id`,mt.`text`,mt.`url` 
+		FROM `menu_tree` mt,`menu_dept_or_group` mdg
+		WHERE mt.`id` = mdg.`menuid`
+		<if test="dgId != null and dgId != ''">
+			AND mdg.`dgid` = #{dgId}
+		</if>
+		limit #{start},#{limit}
+	</select>
+	
+	<!-- 查询部门与菜单关系是 【右边】的数据 -->
+	<select id="selectShowRightManuDate" resultMap="MenuList" parameterType="HashMap">
+		SELECT mt.`id`,mt.`text`,mt.`url`  
+		FROM `menu_tree` mt
+		WHERE mt.`id` NOT IN (
+			SELECT mdgh.`menuid` FROM menu_dept_or_group mdgh WHERE mdgh.`dgid` = #{dgId}
+		)
+		AND mt.`url` &lt;&gt; ''
+		limit #{start},#{limit}
 	</select>
 </mapper>

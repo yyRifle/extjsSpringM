@@ -1,11 +1,14 @@
 /**
  * 菜单管理extjs gbp 2018年1月23日 11:23:38
  */
-
+var iHBody;
+var iWBody;
 Ext.onReady(function(){
-	var menuMode = Ext.define('treeModel',{
+	iHBody=document.body.clientHeight||document.documentElement.clientHeight;
+	iWBody=document.body.clientWidth||document.documentElement.clientWidth;
+	var menuMode = Ext.define('menuModel',{
 		extend:'Ext.data.Model',
-		id:"treeModelId",
+		id:"menuModelId",
 		fields:[
 		        {name:'id',type:'String'},
 		        {name:'text',type:'String'},
@@ -34,28 +37,23 @@ Ext.onReady(function(){
 		}
 	});
 	var tbar = Ext.create('Ext.toolbar.Toolbar',{
-		width:35,
+		width:30,
 		items:[
 				{
 					xtype:'label',
-					text:'用户名'
+					text:'菜单名称'
 				},
 				{
 					xtype:'textfield',
-					id:'username'
+					id:'text'
 				},'-',
 				{
 					text:'<span style="color:white;font-size:300">查询</span>',
 					style: 'background: #368ECE;border-color:#126DAF',
 					icon: '../../images/minico/search.png',
 					handler:function(){
-						var username=Ext.getCmp('username').getValue();
-						var phone=Ext.getCmp('jiarNm').getValue();
-						var isenable=Ext.getCmp('beginTime').getValue();
-						var email=Ext.getCmp('endTime').getValue();
-						var isenableSecond="second";//添加一个区分首次加载还是查询
-						
-						menuStore.load({params:{username:username,phone:phone,isenable:isenable,isenableSecond:isenableSecond,email:email,start: 0, limit: 25}});	
+						var menuName=Ext.getCmp('text').getValue();
+						menuStore.load({params:{menuName:menuName,start: 0, limit: 25}});	
 					}
 				},'-',
 				{
@@ -68,7 +66,7 @@ Ext.onReady(function(){
 						    title:'新增菜单',       //弹出窗口内布局会充满整个窗口;
 						    modal: true, //是否模态窗口，默认为false
 						    width:380,          //设置窗口大小;
-						    height:300,
+						    height:iHBody-200,
 						    closeAction:'hide', //点击右上角关闭按钮后会执行的操作;
 						   	closable:true,     //隐藏关闭按钮;
 						    draggable:true,     //窗口可拖动;
@@ -82,7 +80,7 @@ Ext.onReady(function(){
 	new Ext.create('Ext.grid.Panel',{
 		id:'mianTabId',
 		store:menuStore,
-		height:620,
+		height:iHBody,
 		columnLines: true,
 		renderTo:Ext.getBody(),
 		tbar:tbar,
@@ -95,7 +93,7 @@ Ext.onReady(function(){
 		}),
     	columns: [
     		{ header: '序号', xtype: 'rownumberer', width: 40,height:20, align: 'center', sortable: false },
-    		{ text: 'id',dataIndex:'id',width:70},
+    		{ text: 'id',dataIndex:'id',align: 'center',width:70},
 	        { text: '菜单名', dataIndex: 'text',align: 'center', sortable: false },
 	        { text: '是否有子节点',dataIndex:'leaf',align: 'center',width:120,
 	        	renderer:function(value){
@@ -168,7 +166,7 @@ Ext.onReady(function(){
 		bodyStyle:'margin-top:3px',
 		layoyt:'form',
 		border:false,
-		height:270,
+		height:iHBody-240,
 		id:"newAddMenuFormID",
 		items:[{
 			xtype: "combobox",              //使用xtype定义

@@ -1,5 +1,8 @@
 package com.gr.blog.intercept;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,17 +38,17 @@ public class LoginInterceptor implements HandlerInterceptor{
 	 */
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
 			Object args) throws Exception {
-//		System.out.println("===========HandlerInterceptor1 preHandle");
+//		List<String> ipaddrList = new ArrayList<>();
+//		ipaddrList.add("homePageAction/index.do");
+//		ipaddrList.add("login.do");
 //		String loginURL = request.getRequestURL().toString();
-//		//http://localhost:8080/extjsSpringM/login.do
-//		String subURL = loginURL.substring(loginURL.indexOf("8080")+5, loginURL.length());
+//		String usernmae = request.getParameter("username");
+//		String password = request.getParameter("password");
+//		String subURL = loginURL.substring(loginURL.indexOf("extjsSpringM")+13, loginURL.length());
 //		System.out.println("===========subURL:"+subURL);
-//		boolean isbool = loginURL.contains("login.do");
-//		if (!"extjsSpringM/login.do".equals(subURL)){
-//			request.getRequestDispatcher("/login.html").forward(request, response);
+//		if (!ipaddrList.contains(subURL) && !"".equals(usernmae) && !"".equals(password)){
 //			return false;
 //		}
-//		System.out.println("===========loginURL:"+loginURL);
 		return true;
 	}
 

@@ -4,23 +4,22 @@ import java.util.List;
 import java.util.Map;
 
 import com.gr.blog.dept.model.DeptModel;
+import com.gr.blog.mean.model.MeanModel;
 
 public interface DeptDao {
 
 	List<DeptModel> selectAllDept(Map<String, Object> deptMap);
 
-	int insertDeptInfoToDB(DeptModel dModel);
+	int insertDeptInfoToDB(Map<String,Object> map);
 
 	List<DeptModel> selectMenuDeptByDgId(String dgId);
 
 	int deleteDeptAndGroupInfo(String dgId);
 
-	List<DeptModel> selectExistingDept(Map<String, Object> deptMap);
+	int deleteMenuAndDeptByID(Map<String, Object> map);
 
-	List<DeptModel> selectIsNotExistingDept(Map<String, Object> deptMap);
+	int insertMenuDeptToDbById(Map<String, Object> map);
 
-	int deleteMenuAndDeptByID(Map<String, Object> manuDeptMap);
-
-	int insertMenuDeptToDbById(Map<String, Object> manuDeptMap);
+	int selectMenuAndDeptLinkById(Map<String, Object> map);
 	
 }

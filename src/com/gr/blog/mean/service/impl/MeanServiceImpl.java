@@ -44,7 +44,6 @@ public class MeanServiceImpl implements MeanService {
 		} 
 		return resultList;
 	}
-
 	/**
 	 * 查询总数
 	 */
@@ -52,7 +51,6 @@ public class MeanServiceImpl implements MeanService {
 	public int findTotalMenu() {
 		return meanDao.selectTotalMenu();
 	}
-	
 	/**
 	 * 分页查询显示需要的数据
 	 */
@@ -82,9 +80,16 @@ public class MeanServiceImpl implements MeanService {
 	}
 
 	@Override
-	public List<MeanModel> showUrlIsNotNullMenu() {
-		String mtUrl = "";
-		return meanDao.selectUrlIsNotNullMenu(mtUrl);
+	public List<Map<String,Object>> findMenuAndDept() {
+		return meanDao.selectMenuAndDept();
+	}
+	@Override
+	public List<MeanModel> showLeftManuDate(Map<String, Object> deptMap) {
+		return meanDao.selectShowLeftManuDate(deptMap);
+	}
+	@Override
+	public List<MeanModel> showRightManuDate(Map<String, Object> deptMap) {
+		return meanDao.selectShowRightManuDate(deptMap);
 	}
 
 }

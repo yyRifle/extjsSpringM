@@ -22,14 +22,6 @@ public class HomePageAction {
 	 */
 	@RequestMapping("homePageAction/index")
 	public String homePage(HttpServletRequest request){
-		request.getSession().setAttribute("username", "admin");
-		String t1 = request.getRequestURI();
-		String t2 = request.getRequestURL().toString();
-		String t3 = request.getContextPath();
-		System.out.println("t1:"+t1);
-		System.out.println("t2:"+t2);
-		System.out.println("t3:"+t3);
-		System.out.println("t3:"+t3.length());
 		return "login";
 	}
 }

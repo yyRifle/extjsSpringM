@@ -1,7 +1,6 @@
 package com.gr.blog.user.service.impl;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -54,5 +53,26 @@ public class UserServiceImpl implements UserService {
 		String[] arrid =ids.split(",");
 		List<String> idList = Arrays.asList(arrid);
 		return userDao.batchDeleteUserInfo(idList);
+	}
+
+	@Override
+	public List<UserModel> findLeftUserInfo(Map<String, Object> deptMap) {
+		return userDao.selectLeftUserInfo(deptMap);
+	}
+
+	@Override
+	public List<UserModel> findRightUserInfo(Map<String, Object> deptMap) {
+		return userDao.selectRightUserInfo(deptMap);
+	}
+
+	@Override
+	public int addGroupOrDeptAndUserByID(Map<String, Object> dguMap) {
+		dguMap.put("operateTime", CommonUtils.getStringCurrentTime());
+		return userDao.insertGroupOrDeptAndUserByID(dguMap);
+	}
+
+	@Override
+	public int removeGroupOrDeptAndUserByID(Map<String, Object> dguMap) {
+		return userDao.deleteGroupOrDeptAndUserByID(dguMap);
 	}
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,9 +16,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.gr.blog.dept.service.DeptService;
 import com.gr.blog.mean.model.MeanModel;
 import com.gr.blog.mean.service.MeanService;
 import com.gr.blog.utils.CollectionsUtil;
+import com.gr.blog.utils.CommonUtils;
+import com.gr.blog.utils.ResponseUtils;
 
 /**
  * 菜单管理的action
@@ -34,6 +38,56 @@ public class MeanAction {
 	private MeanService meanService;
 	
 	/**
+	 * 部门权限管理界面点击权限分配时，展示【已存在】部门和菜单关系的数据
+	 * @author:巩斌鹏
+	 * 2018年6月3日 下午2:53:12
+	 * @return
+	 * Map<String,Object>
+	 */
+	@RequestMapping("meanAction/showLeftManuDate")
+	public @ResponseBody Map<String,Object> showLeftManuDate(HttpServletRequest request,int page,int start,int limit){
+		Map<String,Object> deptMap = new HashMap<String,Object>();
+		String dgId = request.getParameter("dgId");//dgid实际上是部门的id
+		deptMap.put("dgId", dgId);
+		deptMap.put("start", start);
+		deptMap.put("limit", limit);
+		List<MeanModel> deptList = meanService.showLeftManuDate(deptMap);
+		deptMap.put("root", deptList);
+		if (CollectionsUtil.isListNotEmpty(deptList)){
+			deptMap.put("total", deptList.size());
+		} 
+		deptMap.put("total", "");
+		logger.error("[左边的查询数据]:"+deptMap);
+		return deptMap;
+	}
+	/**
+	 * 部门权限管理界面点击权限分配时，展示【不存在】部门和菜单关系的数据
+	 * @author:巩斌鹏
+	 * 2018年6月3日 下午2:53:22
+	 * @return
+	 * Map<String,Object>
+	 */
+	@RequestMapping("meanAction/showRightManuDate")
+	public @ResponseBody Map<String,Object> showRightManuDate(HttpServletRequest request,int page,int start,int limit){
+		Map<String,Object> deptMap = new HashMap<String,Object>();
+		String dgId = request.getParameter("dgId");//dgid实际上是部门的id
+		deptMap.put("dgId", dgId);
+		deptMap.put("start", start);
+		deptMap.put("limit", limit);
+		List<MeanModel> deptList = meanService.showRightManuDate(deptMap);
+		deptMap.put("root", deptList);
+		if (CollectionsUtil.isListNotEmpty(deptList)){
+			deptMap.put("total", deptList.size());
+		} 
+		deptMap.put("total", "");
+		logger.error("[右边的查询数据]:"+deptMap);
+		return deptMap;
+	}
+	
+	
+	
+	
+	/**
 	 * 受页面进去之后加载所有的菜单
 	 * @author:gbp
 	 * @param request
@@ -45,7 +99,7 @@ public class MeanAction {
 	public Map<String,List<MeanModel>> showAllTreeIndex(HttpServletRequest request){
 		String node = request.getParameter("node");
 		Map<String,List<MeanModel>> modelMap = meanService.showAllTree(node);
-		logger.error("受页面进去之后加载所有的菜单："+modelMap);
+		logger.error("[受页面进去之后加载所有的菜单]："+modelMap);
 		return modelMap;
 	}
 	
@@ -85,7 +139,6 @@ public class MeanAction {
 		
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping("meanAction/addMenuInfoToDb")
 	public void addMenuInfoToDb(HttpServletRequest request,HttpServletResponse response) throws IOException{
 		Map<String, String[]> menuMap = request.getParameterMap();
@@ -94,26 +147,42 @@ public class MeanAction {
 		String username = (String)request.getSession().getAttribute("username");
 		addmap.put("operate", username);
 		int result = meanService.insertToDBMenuDate(addmap);
-		if (result > 0) {
-			response.getWriter().print("{ success: true, errors: {} }");
-		} else {
-			response.getWriter().print("{ success: true, errors: {info:'保存失败'} }");
-		}
+		ResponseUtils.returnResult(response, result);
 	}
 	
 	/**
-	 * 查询menu中只有子菜单的数据
+	 * 查询出所有的对应菜单与部门的关系
 	 * @author:巩斌鹏
-	 * 2018年6月1日 上午11:05:38
+	 * 2018年6月3日 上午9:05:55
 	 * @return
-	 * List<MeanModel>
+	 * Map<String,Object>
 	 */
-	@RequestMapping("meanAction/showUrlIsNotNullMenu")
-	@ResponseBody
-	public List<MeanModel> showUrlIsNotNullMenu(){
-		return meanService.showUrlIsNotNullMenu();
+	public Map<String,Object> getRepeatMenuIdInfo(){
+		Map<String,Object> resultMap = new HashMap<>();
+		TreeSet<Integer> ts=new TreeSet<>();
+		List<Map<String,Object>> menuAndDeptList = meanService.findMenuAndDept();
+		if (CollectionsUtil.isListNotEmpty(menuAndDeptList)){
+			String tt = "";
+			for (Map<String,Object> map : menuAndDeptList) {
+				int menuid = (int) map.get("menuid");
+				ts.add(menuid);
+				if (ts.contains(menuid)) {
+					String value = (String) map.get("dgName");
+					String resultTT = (String) resultMap.get(menuid+"");
+					if (CommonUtils.isNotEmpty(resultTT)) {
+						tt = resultTT+","+ value;
+					} else {
+						tt = value;
+					}
+				} 
+				resultMap.put(menuid+"", tt);
+				tt = "";
+			}
+			logger.error("[查询出所有的对应菜单与部门的关系]:"+resultMap);
+			return (Map<String, Object>)resultMap;
+		}
+		return null;
 	}
-	
 	/**
 	 * 查询菜单的总数
 	 * @author:gbp

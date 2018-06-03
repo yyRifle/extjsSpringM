@@ -121,7 +121,7 @@ Ext.onReady(function(){
 					    modal: true, //是否模态窗口，默认为false
 					    width:iWBody-300,          //设置窗口大小;
 					    height:iHBody-100,
-					    closeAction:'hide', //点击右上角关闭按钮后会执行的操作;
+					    //closeAction:'hide', //点击右上角关闭按钮后会执行的操作;
 					   	closable:false,     //隐藏关闭按钮;
 					    draggable:true,     //窗口可拖动;
 					    resizable: false,

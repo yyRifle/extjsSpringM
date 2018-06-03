@@ -1,6 +1,7 @@
 package com.gr.blog.user.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.gr.blog.user.model.UserModel;
 
@@ -16,5 +17,13 @@ public interface UserService {
 	int insertUserInfoToDb(UserModel user);
 
 	int deleteOrBatch(String ids);
+
+	List<UserModel> findLeftUserInfo(Map<String, Object> deptMap);
+
+	List<UserModel> findRightUserInfo(Map<String, Object> deptMap);
+
+	int addGroupOrDeptAndUserByID(Map<String, Object> dguMap);
+
+	int removeGroupOrDeptAndUserByID(Map<String, Object> dguMap);
 
 }

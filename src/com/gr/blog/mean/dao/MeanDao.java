@@ -24,6 +24,10 @@ public interface MeanDao {
 
 	public int selectFatherIdByName(String fatherName);
 
-	public List<MeanModel> selectUrlIsNotNullMenu(String mtUrl);
+	public List<Map<String,Object>> selectMenuAndDept();
+
+	public List<MeanModel> selectShowLeftManuDate(Map<String, Object> deptMap);
+
+	public List<MeanModel> selectShowRightManuDate(Map<String, Object> deptMap);
 
 }

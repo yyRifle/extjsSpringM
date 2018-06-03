@@ -82,4 +82,29 @@
 	<select id="selectUserByUsername" parameterType="java.lang.String" resultMap="userModelList">
 		select * from user_info where username= #{username} 
 	</select>
+	
+	<!-- 组或者部门与用户权限【左边】数据的展示 -->
+	<select id="selectLeftUserInfo" parameterType="hashmap" resultMap="userModelList">
+		SELECT * FROM `user_info` ui,`user_group` ug
+		WHERE ui.uid = ug.uid
+		AND ug.gid = #{dgId}
+		limit #{start},#{limit}
+	</select>
+	<!-- 组或者部门与用户权限【右边】数据的展示 -->
+	<select id="selectRightUserInfo" parameterType="hashmap" resultMap="userModelList">
+		SELECT * FROM `user_info` ui WHERE ui.uid NOT IN (
+			SELECT mg.uid FROM `user_group` mg WHERE mg.gid = #{dgId}
+		)
+		limit #{start},#{limit}
+	</select>
+	
+	<!-- 【添加】用户和部门的关系 -->
+	<insert id="insertGroupOrDeptAndUserByID" parameterType="hashmap">
+		insert into user_group(uid,gid,operate_people,operate_time) 
+		values(#{uid},#{dgid},#{operate},#{operateTime})
+	</insert>
+	<!-- 【删除】用户和部门的关系 -->
+	<delete id="deleteGroupOrDeptAndUserByID" parameterType="hashmap">
+		delete from user_group where uid = #{uid} and gid =#{dgid}
+	</delete>
 </mapper>

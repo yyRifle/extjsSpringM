@@ -85,9 +85,9 @@ Ext.onReady(function(){
 			    text: '查看权限',
 			    align: 'center',
 			    renderer:function(value, metaData, record){
-			    	var dgId = record.data.id;
-			    	var dgName = record.data.text;
-			    	param = dgId+"@@"+dgName
+			    	var menuId = record.data.id;
+			    	var menuName = record.data.text;
+			    	param = menuId+"@@"+menuName
 			    	btnStr='<span>'+'<img src="../../../images/minico/find-perm.png" alt="权限设置" onclick=\"findDeptPerm(\''+param+'\');\"/></span>';  
 			    	return btnStr;
 			    }

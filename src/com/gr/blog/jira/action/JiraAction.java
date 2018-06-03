@@ -12,16 +12,15 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.gr.blog.jira.model.JiraModel;
 import com.gr.blog.jira.service.JiraService;
 import com.gr.blog.user.model.UserModel;
 import com.gr.blog.utils.CollectionsUtil;
 import com.gr.blog.utils.CommonUtils;
+import com.gr.blog.utils.ResponseUtils;
 
 /**
  * jira相关的所有来
@@ -62,7 +61,7 @@ public class JiraAction {
 		jiraMap.put("start", start);
 		jiraMap.put("limit", limit);
 		List<JiraModel> jiraList = jiraService.queryAlljira(jiraMap);
-		System.out.println("jiraList:"+jiraList);
+		logger.error("根据用户名查询该用户的所有的数据:"+jiraList);
 		return jiraList;
 	}
 	
@@ -82,18 +81,13 @@ public class JiraAction {
 		Map<String,Object> jiraMap = new HashMap<String, Object>();
 		jiraMap = CollectionsUtil.MapArrayToMapObject(jirasMap, jiraMap);
 		
-		System.out.println("jiraModel:"+jiraMap);
 		Object obj = request.getSession().getAttribute("userModel");
 		if (CommonUtils.isNotObject(obj)) {
 			UserModel umodel = (UserModel)obj;
 			jiraMap.put("nickName", umodel.getNickname());
 		}
 		int submitNum = jiraService.suibmitJirainfo(jiraMap);
-		if (submitNum > 0) {
-			response.getWriter().print("{ success: true, errors: {} }");
-		} else {
-			response.getWriter().print("{ success: true, errors: {info:'保存失败'} }");
-		}
+		ResponseUtils.returnResult(response, submitNum);
 	}
 	
 	/**
@@ -123,8 +117,7 @@ public class JiraAction {
 	 * String
 	 */
 	@RequestMapping("jiraAction/queryShiXianByjid")
-	@ResponseBody
-	public List<JiraModel> queryShiXianByjid(HttpServletRequest request,String jid){
+	public @ResponseBody List<JiraModel> queryShiXianByjid(HttpServletRequest request,String jid){
 		Object obj = request.getSession().getAttribute("userModel");
 		UserModel umodel = (UserModel)obj;
 		List<JiraModel> jirlist = jiraService.queryShiXianByjid(jid,umodel.getNickname());
@@ -139,13 +132,9 @@ public class JiraAction {
 	 * @throws IOException 
 	 */
 	@RequestMapping("jiraAction/deleteJiraInfoByJid")
-	public void deleteJiraInfoByJid(HttpServletRequest request,HttpServletResponse response) throws IOException {
+	public @ResponseBody void deleteJiraInfoByJid(HttpServletRequest request,HttpServletResponse response) throws IOException {
 		String jid = request.getParameter("jid");
 		int redult = jiraService.deleteJiraInfoByJid(jid);
-		if (redult > 0) {
-			response.getWriter().print("{ success: true, errors: {} }");
-		} else {
-			response.getWriter().print("{ success: true, errors: {info:'删除失败'} }");
-		}
+		ResponseUtils.returnResult(response, redult);
 	}
 }

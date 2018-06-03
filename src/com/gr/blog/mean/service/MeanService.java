@@ -24,6 +24,10 @@ public interface MeanService {
 
 	public int insertToDBMenuDate(Map<String, Object> addmap);
 
-	public List<MeanModel> showUrlIsNotNullMenu();
+	public List<Map<String,Object>> findMenuAndDept();
+
+	public List<MeanModel> showLeftManuDate(Map<String, Object> deptMap);
+
+	public List<MeanModel> showRightManuDate(Map<String, Object> deptMap);
 
 }
