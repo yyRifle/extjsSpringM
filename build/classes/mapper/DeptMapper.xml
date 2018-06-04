@@ -57,8 +57,8 @@
 	<select id="selectDeptInfoByUserName" parameterType="java.lang.String" resultMap="deptOrGroupList">
 		SELECT dg.gid,dg.g_name,dg.dg_type FROM `dept_or_group` dg,`user_group` ug
 		WHERE dg.gid = ug.gid
-		<if test="uid != null and uid != ''">
-		AND ug.uid = #{uid}
+		<if test="_parameter != null and _parameter != ''">
+			AND ug.uid = #{_parameter}
 		</if>
 	</select>
 </mapper>
