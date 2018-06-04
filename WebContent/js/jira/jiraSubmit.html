@@ -12,6 +12,69 @@
 <script type="text/javascript" src="jiraExt.js"></script>
 </head>
 <body>
+<script type="text/javascript">
+$(function(){
+	/*当文件输入框出现改变时使用*/
+	$('#btn_file').bind('change', function() {
+	    var formData = new FormData();
+	    var file = $("#btn_file")[0].files[0];
+	    formData.append("file", file);
+	    /* Ext.Ajax.request({
+        	url:"/extjsSpringM/fileLoadAction/fileUploadDate.do",
+        	type: "POST",
+	        contentType: 'multipart/form-data',
+	        params:{
+	        	"file":file
+        	},
+        	success : function(response, options) {
+        		Ext.Msg.alert('提示', '删除成功');
+        		deptAndGroupStore.load();
+        	},
+        	failure : function(response, options) {
+        		Ext.Msg.alert('提示', '删除失败');
+        	}
+        }); */
+	   $.ajax({
+	        url: "/extjsSpringM/fileLoadAction/fileUploadDate.do", 
+	        type: "POST",
+	        contentType: 'multipart/form-data',
+	        data: formData,
+	        async: true,
+	        cache: false,
+	        processData: false, //告诉jQuery不要去设置Content-Type请求头
+	        contentType: false, //告诉jQuery不要去处理发送的数据
+	        success: function(e) {
+	        	Ext.Msg.alert('提示', '删除成功');
+	            console.log(e)
+	        }
+	    }); 
+	});
+	function Read4() {  
+        var progressBar=Ext.Msg.show({  
+	        title:"标题",  
+	        msg:"通过进度的大小来控制进度",  
+	        progress:true,  
+	        width:300  
+        });  
+        var count=0;  
+        var bartext="";  
+        var curnum=0;  
+        Ext.TaskMgr.start({  
+            run:function () {  
+                count++;  
+                if (count>=10) {  
+                    progressBar.hide();  
+                }  
+                curnum=count/10;  
+                bartext=curnum*100+"%";  
+                progressBar.updateProgress(curnum,bartext);  
+            },  
+            interval:1000  
+        })  
+    }  
+});
+</script>
+<input type="file" id="btn_file" style="display:none">
 
 </body>
 </html>

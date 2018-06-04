@@ -157,6 +157,14 @@ Ext.onReady(function(){
 					  });
 					  win.show();
 				}
+			},{
+				text:'<span style="color:white;font-size:300">上传文件</span>',
+				style: 'background: #368ECE;border-color:#126DAF',
+				icon: '../../images/minico/file_upload.png',
+				id:'fileUploadExcelId',
+				handler:function(){
+					document.getElementById("btn_file").click(); 
+				}
 			}]
 	});
 	new Ext.create('Ext.grid.Panel',{
@@ -460,19 +468,25 @@ function openmsgYli (value){
 } 
 //删除该jira信息
 function deleteJiarInfo (value){
-	Ext.Ajax.request({
-		url:"/extjsSpringM/jiraAction/deleteJiraInfoByJid.do",
-		mehtod:'get',
-		params:{
-			jid:value
-		},
-		success : function(response, options) {
-			Ext.Msg.alert('提示', '删除成功');
-			jiraStore.load();
-		},
-		failure : function(response, options) {
-			Ext.Msg.alert('提示', '原因如下：' + action);
-		}
-	
+	Ext.MessageBox.confirm("提示", "你确定要删除此项？", function(btnId){
+		if (btnId == "yes") {  
+			Ext.Ajax.request({
+				url:"/extjsSpringM/jiraAction/deleteJiraInfoByJid.do",
+				mehtod:'get',
+				params:{
+					jid:value
+				},
+				success : function(response, options) {
+					Ext.Msg.alert('提示', '删除成功');
+					jiraStore.load();
+				},
+				failure : function(response, options) {
+					Ext.Msg.alert('提示', '原因如下：' + action);
+				}
+				
+			});
+		}else if (btnId == "no") {  
+	       return;
+	    }  
 	});
 }

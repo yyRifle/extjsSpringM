@@ -57,7 +57,7 @@ Ext.onReady(function(){
 					}
 				},'-',
 				{
-					text:'新增菜单',
+					text:'<span style="color:white;font-size:300">新增菜单</span>',
 					style: 'background: #368ECE;border-color:#126DAF',
 					icon: '../../images/minico/sign_add.png',
 					handler:function(){

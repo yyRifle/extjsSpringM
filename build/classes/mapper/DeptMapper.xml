@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+ 
+<mapper namespace="com.gr.blog.dept.dao.DeptDao">
+	
+	<!-- 配置承接结果集的List -->
+	<resultMap type="com.gr.blog.dept.model.DeptModel" id="deptOrGroupList">
+		<id column="gid" property="dgId"/>
+		<result column="g_name" property="dgName"/>
+		<result column="create_g_people" property="operate" />
+		<result column="create_g_time" property="operateTime" javaType="java.util.Date"/>
+	</resultMap>
+	
+	<select id="selectAllDept" parameterType="hashMap" resultMap="deptOrGroupList">
+		select * from dept_or_group where 1=1
+		limit #{start},#{limit}
+	</select>
+	
+	<!-- 新增部门插入到数据库 -->
+	<insert id="insertDeptInfoToDB" parameterType="hashMap">
+		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+          SELECT LAST_INSERT_ID()
+      	</selectKey>
+		insert into dept_or_group(g_name,create_g_people,create_g_time) values 
+		(#{dgName},#{operate},#{operateTime})
+	</insert>
+	
+	<select id="selectMenuDeptByDgId" parameterType="java.lang.String" resultMap="deptOrGroupList">
+		SELECT dg.`gid`,dg.`g_name`,dg.`create_g_people`,dg.`create_g_time` 
+		FROM `dept_or_group` dg,`menu_dept_or_group` mdg
+		WHERE dg.`gid` = mdg.`dgid`
+		AND dg.`gid` = #{dgId}
+	</select>
+	
+	<delete id="deleteDeptAndGroupInfo" parameterType="java.lang.String">
+		delete from dept_or_group where gid = #{dgId}
+	</delete>
+	
+	<!-- 根据菜单id和部门id【移除】到菜单部门关系表 -->
+	<delete id="deleteMenuAndDeptByID" parameterType="hashMap">
+		delete from menu_dept_or_group where dgid = #{dgid} and menuid = #{menuid}
+	</delete>
+	<!-- 根据菜单id和部门id【插入】到菜单部门关系表 -->
+	<insert id="insertMenuDeptToDbById" parameterType="hashMap" >
+		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="mgid">
+          SELECT LAST_INSERT_ID()
+      	</selectKey>
+		insert into menu_dept_or_group(dgid,menuid,operate_time,operate) values (#{dgid},#{menuid},#{operateTime},#{operate});
+	</insert>
+	
+	<select id="selectMenuAndDeptLinkById" parameterType="hashMap" resultType="int">
+		SELECT COUNT(mgid) FROM `menu_dept_or_group` WHERE dgid = #{dgid} and menuid = #{menuid}
+	</select>
+</mapper>
