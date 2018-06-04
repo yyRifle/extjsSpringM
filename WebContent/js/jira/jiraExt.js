@@ -285,6 +285,7 @@ Ext.onReady(function(){
 		border:false,
 		height: '100%',  
 		id:"jiraSubmitId",
+		closeAction: 'close',
 		items:[{
 			xtype:'textfield',
 			fieldLabel:'<font color="red">*</font>Jira号',
@@ -394,7 +395,7 @@ Ext.onReady(function(){
 			style: 'background: #368ECE;border-color:#126DAF',
 			icon: '../../images/minico/cancel.png',
             handler: function () {
-            	Ext.getCmp("winCe").close(this);
+            	Ext.getCmp("winCe").close();
             }
         }
       ]

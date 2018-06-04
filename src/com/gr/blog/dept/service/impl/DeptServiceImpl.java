@@ -62,5 +62,10 @@ public class DeptServiceImpl implements DeptService{
 		return deptDao.selectMenuAndDeptLinkById(map);
 	}
 
+	@Override
+	public List<DeptModel> getDeptInfoByUserName(String uid) {
+		return deptDao.selectDeptInfoByUserName(uid);
+	}
+
 
 }

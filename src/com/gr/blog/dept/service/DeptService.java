@@ -24,6 +24,8 @@ public interface DeptService {
 	int insertMenuDeptToDbById(Map<String, Object> map);
 	//根据部门id和菜单id查询他们是否存在关联关系
 	int findMenuAndDeptLinkById(Map<String, Object> map);
+	//根据userid 查询部门的信息
+	List<DeptModel> getDeptInfoByUserName(String uid);
 	
 
 }

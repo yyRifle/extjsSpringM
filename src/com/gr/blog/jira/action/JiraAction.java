@@ -54,7 +54,7 @@ public class JiraAction {
 		Object obj = request.getSession().getAttribute("userModel");
 		if (CommonUtils.isNotObject(obj)) {
 			UserModel umodel = (UserModel)obj;
-			jiraModel.setUsername(umodel.getNickname());
+			jiraModel.setUsername(umodel.getUsername());
 		}
 		//对象转map
 		Map<String,Object> jiraMap = CollectionsUtil.isobjectToMap(jiraModel);
@@ -84,7 +84,7 @@ public class JiraAction {
 		Object obj = request.getSession().getAttribute("userModel");
 		if (CommonUtils.isNotObject(obj)) {
 			UserModel umodel = (UserModel)obj;
-			jiraMap.put("nickName", umodel.getNickname());
+			jiraMap.put("username", umodel.getUsername());
 		}
 		int submitNum = jiraService.suibmitJirainfo(jiraMap);
 		ResponseUtils.returnResult(response, submitNum);

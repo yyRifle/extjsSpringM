@@ -8,6 +8,8 @@ public class DeptModel {
 	
 	private String dgName;//部门或者组name
 	
+	private String dgType;//部门或者组类型
+	
 	private String operate;//操作人
 	
 	private Date operateTime;
@@ -53,6 +55,15 @@ public class DeptModel {
 
 	public void setDeptMenuLink(String deptMenuLink) {
 		this.deptMenuLink = deptMenuLink;
+	}
+	
+	
+	public String getDgType() {
+		return dgType;
+	}
+
+	public void setDgType(String dgType) {
+		this.dgType = dgType;
 	}
 
 	@Override

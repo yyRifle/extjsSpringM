@@ -30,7 +30,9 @@ Ext.onReady(function(){
 			type:'ajax',
 			url:'/extjsSpringM/meanAction/showAllTree.do',
 			reader:{
-				type:'json'
+				type:'json',
+				root: 'rows',  //数据
+				totalProperty: 'total'
 			}
 		},
 		root:{

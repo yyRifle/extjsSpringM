@@ -16,9 +16,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.gr.blog.dept.model.DeptModel;
 import com.gr.blog.dept.service.DeptService;
 import com.gr.blog.mean.model.MeanModel;
 import com.gr.blog.mean.service.MeanService;
+import com.gr.blog.user.model.UserModel;
 import com.gr.blog.utils.CollectionsUtil;
 import com.gr.blog.utils.CommonUtils;
 import com.gr.blog.utils.ResponseUtils;
@@ -36,6 +38,10 @@ public class MeanAction {
 	@Autowired
 	@Qualifier(value="meanService")
 	private MeanService meanService;
+	
+	@Autowired
+	@Qualifier("deptService")
+	private DeptService deptService;
 	
 	/**
 	 * 部门权限管理界面点击权限分配时，展示【已存在】部门和菜单关系的数据
@@ -93,14 +99,39 @@ public class MeanAction {
 	 * @param request
 	 * @return
 	 * 2018年1月23日 上午11:39:05
+	 * @throws IOException 
 	 */
 	@RequestMapping("meanAction/showAllTree")
 	@ResponseBody
-	public Map<String,List<MeanModel>> showAllTreeIndex(HttpServletRequest request){
+	public List<MeanModel> showAllTree(HttpServletRequest request,HttpServletResponse response) throws IOException{
+		UserModel user = (UserModel) request.getSession().getAttribute("userModel");
 		String node = request.getParameter("node");
-		Map<String,List<MeanModel>> modelMap = meanService.showAllTree(node);
-		logger.error("[受页面进去之后加载所有的菜单]："+modelMap);
-		return modelMap;
+		if (null != user) {
+			String username = user.getUsername();
+			List<DeptModel> deptList =deptService.getDeptInfoByUserName(user.getUid());
+			if (CollectionsUtil.isListNotEmpty(deptList)) {
+				DeptModel dm = deptList.get(0);
+				String dgType = dm.getDgType();
+				if ("superDept".equals(dgType)) {
+					List<MeanModel> superModelMap = meanService.showAllTree(node);
+					logger.error("[超管--受页面进去之后加载所有的菜单]："+superModelMap);
+					return superModelMap;
+				} else if ("common".equals(dgType)) {
+					List<MeanModel> meanList = meanService.findMenuDateByUserName(username);//先获取该用户的权限的父节点
+					logger.error("[普通用户--受页面进去之后加载所有的菜单]："+meanList);
+					return meanList;
+				} else if (!"superDept".equals(dgType) && !"common".equals(dgType) && !"root".equals(node)) {
+					List<MeanModel> superModelMap = meanService.showAllTree(node);
+					return superModelMap;
+				}
+			} else {
+				return null;
+			}
+		} else {
+			response.getWriter().print("{ success: true, errors: {info:'用户登陆已过期，请重新登陆'} }");
+			return null;
+		}
+		return null;
 	}
 	
 	/**

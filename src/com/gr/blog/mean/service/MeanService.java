@@ -13,7 +13,7 @@ import com.gr.blog.mean.model.MeanModel;
  */
 public interface MeanService {
 
-	public Map<String,List<MeanModel>> showAllTree(String nodeId);
+	public List<MeanModel> showAllTree(String nodeId);
 
 	public int findTotalMenu();
 
@@ -29,5 +29,7 @@ public interface MeanService {
 	public List<MeanModel> showLeftManuDate(Map<String, Object> deptMap);
 
 	public List<MeanModel> showRightManuDate(Map<String, Object> deptMap);
+
+	public List<MeanModel> findMenuDateByUserName(String username);
 
 }

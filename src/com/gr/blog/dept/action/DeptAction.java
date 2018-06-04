@@ -187,9 +187,11 @@ public class DeptAction {
 	private void addDeptInfoToDb(HttpServletRequest request,HttpServletResponse response) throws IOException{
 		Map<String,Object> deptMap = new HashMap<String,Object>();
 		String dgName = request.getParameter("dgName");
+		String isSuperManage = request.getParameter("isSuperManage");
 		UserModel usermode = (UserModel) request.getSession().getAttribute("userModel");
 		deptMap.put("dgName", dgName);
 		deptMap.put("operate", usermode.getUsername());
+		deptMap.put("isSuperManage", isSuperManage);
 		int intsertNm = deptService.addDeptInfoToDb(deptMap);
 		ResponseUtils.returnResult(response, intsertNm);
 	}

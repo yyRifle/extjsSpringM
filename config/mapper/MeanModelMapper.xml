@@ -37,9 +37,17 @@
 	<select id="selectTotalMenu" resultType="java.lang.Integer">
 		select count(id) total from menu_tree
 	</select>
-	<!-- 根据传入的父节点 查询得到子节点 -->
+	<!-- 根据传入的父节点 查询得到子节点 
+		备注：如果仅传入一个类型为String的参数，那么在 xml文件中应该使用_parameter来代替参数名。
+	-->
 	<select id="selectAllMean" resultMap="MenuList" parameterType="java.lang.String">
-		select * from menu_tree bt where bt.fatherId = #{fatherId};
+		select * from menu_tree bt where  1=1
+		<if test="_parameter != null and _parameter != '' and _parameter == 'root'">
+			and bt.fatherId = '0';
+		</if>
+		<if test="_parameter != null and _parameter != '' and _parameter != 'root'">
+			and bt.fatherId = #{_parameter};
+		</if>
 	</select>
 	
 	<select id="selectALLTreeMenu" resultMap="MenuList">
@@ -95,5 +103,15 @@
 		)
 		AND mt.`url` &lt;&gt; ''
 		limit #{start},#{limit}
+	</select>
+	
+	<!-- 用户登陆是获取该用户权限的查询菜单 -->
+	<select id="selectMenuDateByUserName" parameterType="java.lang.String" resultMap="MenuList">
+		SELECT  * FROM menu_tree WHERE id IN (SELECT DISTINCT  mt.`fatherId` 
+		  FROM `menu_tree` mt  WHERE mt.`id` IN 
+		    (SELECT  mdg.`menuid` FROM `menu_dept_or_group` mdg  WHERE mdg.`dgid` IN 
+		      (SELECT  ug.`gid` FROM `user_info` mi,`user_group` ug 
+		      WHERE ug.`uid` = mi.`uid`  AND mi.`username` = #{username}))) 
+		ORDER BY id 
 	</select>
 </mapper>

@@ -20,7 +20,7 @@
 	<!-- 根据传入的父节点 查询得到子节点 -->
 	<select id="selectAllJira" parameterType="hashMap" resultMap="jiraList">
 		select * from jiar_sub_record where 1 = 1
-		<if test="username != null and username != ''">
+		<if test="username != null and username != '' and username != 'superadmin'">
 			and username = #{username}
 		</if>
 		<if test="jid != null and jid != ''">
@@ -37,7 +37,7 @@
           SELECT LAST_INSERT_ID()
       	</selectKey>
 		insert into jiar_sub_record(jid,username,jiar_nm,is_ower_sql_bat,is_online,online_Time,code_division,impl_principle,code_line,code_note,operate_time) values 
-		(#{jid},#{nickName},#{jiarNm},#{isOwerSqlBat},#{isOnline},#{onlineTime},#{codeDivision},#{implPrinciple},#{codeLine},#{codeNote},#{operateTime})
+		(#{jid},#{username},#{jiarNm},#{isOwerSqlBat},#{isOnline},#{onlineTime},#{codeDivision},#{implPrinciple},#{codeLine},#{codeNote},#{operateTime})
 	</insert>
 	
 	<delete id="deleteJiraInfoByJid" parameterType="java.lang.String">

@@ -7,6 +7,7 @@
 	<resultMap type="com.gr.blog.dept.model.DeptModel" id="deptOrGroupList">
 		<id column="gid" property="dgId"/>
 		<result column="g_name" property="dgName"/>
+		<result column="dg_type" property="dgType"/>
 		<result column="create_g_people" property="operate" />
 		<result column="create_g_time" property="operateTime" javaType="java.util.Date"/>
 	</resultMap>
@@ -21,8 +22,8 @@
 		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
           SELECT LAST_INSERT_ID()
       	</selectKey>
-		insert into dept_or_group(g_name,create_g_people,create_g_time) values 
-		(#{dgName},#{operate},#{operateTime})
+		insert into dept_or_group(g_name,dg_type,create_g_people,create_g_time) values 
+		(#{dgName},#{isSuperManage},#{operate},#{operateTime})
 	</insert>
 	
 	<select id="selectMenuDeptByDgId" parameterType="java.lang.String" resultMap="deptOrGroupList">
@@ -50,5 +51,14 @@
 	
 	<select id="selectMenuAndDeptLinkById" parameterType="hashMap" resultType="int">
 		SELECT COUNT(mgid) FROM `menu_dept_or_group` WHERE dgid = #{dgid} and menuid = #{menuid}
+	</select>
+	
+	<!-- 根据用户id查询部门信息 -->
+	<select id="selectDeptInfoByUserName" parameterType="java.lang.String" resultMap="deptOrGroupList">
+		SELECT dg.gid,dg.g_name,dg.dg_type FROM `dept_or_group` dg,`user_group` ug
+		WHERE dg.gid = ug.gid
+		<if test="uid != null and uid != ''">
+		AND ug.uid = #{uid}
+		</if>
 	</select>
 </mapper>

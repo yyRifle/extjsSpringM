@@ -25,24 +25,8 @@ public class MeanServiceImpl implements MeanService {
 	 * 得到所有的菜单数据
 	 */
 	@Override
-	public Map<String,List<MeanModel>>showAllTree(String nodeId) {
-		Map<String,List<MeanModel>> resultList = new HashMap<String, List<MeanModel>>();
-		if ("root".equals(nodeId)){
-			nodeId = "0"+"";
-		}
-		if (CommonUtils.isNotEmpty(nodeId)) {//首次加载
-			List<MeanModel> treeList = meanDao.selectAllMean(nodeId);
-			resultList.put("root", treeList);
-			if (CollectionsUtil.isListNotEmpty(treeList)) {
-				for (int i=0;i<treeList.size();i++) {
-					MeanModel mm = treeList.get(i);
-					int fatherId = mm.getFatherId();
-					List<MeanModel> findList = meanDao.selectAllMean(Integer.toString(fatherId));
-					resultList.put("children", findList);
-				}
-			}
-		} 
-		return resultList;
+	public List<MeanModel> showAllTree(String nodeId) {
+		return meanDao.selectAllMean(nodeId);
 	}
 	/**
 	 * 查询总数
@@ -90,6 +74,11 @@ public class MeanServiceImpl implements MeanService {
 	@Override
 	public List<MeanModel> showRightManuDate(Map<String, Object> deptMap) {
 		return meanDao.selectShowRightManuDate(deptMap);
+	}
+	
+	@Override
+	public List<MeanModel> findMenuDateByUserName(String username) {
+		return meanDao.selectMenuDateByUserName(username);
 	}
 
 }

@@ -119,8 +119,8 @@ Ext.onReady(function(){
 					    title:'新增用户',       //弹出窗口内布局会充满整个窗口;
 					    layout: "fit", 
 					    modal: true, //是否模态窗口，默认为false
-					    width:iWBody-300,          //设置窗口大小;
-					    height:iHBody-100,
+					    width:380,          //设置窗口大小;
+					    height:iHBody-200,
 					    //closeAction:'hide', //点击右上角关闭按钮后会执行的操作;
 					   	closable:false,     //隐藏关闭按钮;
 					    draggable:true,     //窗口可拖动;

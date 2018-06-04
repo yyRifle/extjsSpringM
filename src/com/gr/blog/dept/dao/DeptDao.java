@@ -21,5 +21,7 @@ public interface DeptDao {
 	int insertMenuDeptToDbById(Map<String, Object> map);
 
 	int selectMenuAndDeptLinkById(Map<String, Object> map);
+
+	List<DeptModel> selectDeptInfoByUserName(String uid);
 	
 }

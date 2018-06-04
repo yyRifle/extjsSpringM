@@ -30,4 +30,6 @@ public interface MeanDao {
 
 	public List<MeanModel> selectShowRightManuDate(Map<String, Object> deptMap);
 
+	public List<MeanModel> selectMenuDateByUserName(String username);
+
 }
